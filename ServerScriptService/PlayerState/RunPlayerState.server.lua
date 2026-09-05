@@ -90,6 +90,14 @@ local requestSprint = Instance.new("RemoteEvent")
 requestSprint.Name = "RequestSprint"
 requestSprint.Parent = matchSystems
 
+local playerStateSync = matchSystems:FindFirstChild("PlayerStateSync")
+if not playerStateSync then
+	playerStateSync = Instance.new("RemoteEvent")
+	playerStateSync.Name = "PlayerStateSync"
+	playerStateSync.Parent = matchSystems
+end
+
+local lastSyncState = {}
 local lastToggle = {}
 
 requestSprint.OnServerEvent:Connect(function(player, wanted)
@@ -101,6 +109,30 @@ requestSprint.OnServerEvent:Connect(function(player, wanted)
 	lastToggle[player] = now
 	PlayerStateModule.requestSprint(player, wanted == true)
 end)
+
+local function firePlayerSync(player)
+	local state = PlayerStateModule.stateFor(player)
+	if not state then return end
+	local now = os.clock()
+	local snapshot = {
+		stamina = math.floor(state.stamina * 10) / 10,
+		isSprinting = state.sprinting,
+		isJailed = state.jailed,
+		hasSpeedBuff = state.speedBuffUntil > now,
+		hasCaptureImmunity = state.captureImmunityUntil > now,
+	}
+	local last = lastSyncState[player]
+	if last
+		and last.stamina == snapshot.stamina
+		and last.isSprinting == snapshot.isSprinting
+		and last.isJailed == snapshot.isJailed
+		and last.hasSpeedBuff == snapshot.hasSpeedBuff
+		and last.hasCaptureImmunity == snapshot.hasCaptureImmunity then
+		return
+	end
+	lastSyncState[player] = snapshot
+	playerStateSync:FireClient(player, snapshot)
+end
 
 local function onCharacterAdded(player, character)
 	PlayerStateModule.resetPlayerRound(player)
@@ -120,6 +152,7 @@ end
 
 local function onPlayerRemoving(player)
 	lastToggle[player] = nil
+	lastSyncState[player] = nil
 	PlayerStateModule.unregister(player)
 end
 
@@ -134,5 +167,6 @@ wireMatchEvents()
 RunService.Heartbeat:Connect(function(dt)
 	for _, player in ipairs(Players:GetPlayers()) do
 		PlayerStateModule.step(player, dt)
+		firePlayerSync(player)
 	end
 end)

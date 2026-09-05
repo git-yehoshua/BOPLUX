@@ -1,8 +1,12 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local MatchConfig = require(script.Parent.MatchConfig)
 local MatchState = require(script.Parent.MatchState)
+
+local matchSystems = ReplicatedStorage:WaitForChild("MatchSystems")
+local matchStateSync = matchSystems:WaitForChild("MatchStateSync")
 
 local eventsFolder = Instance.new("Folder")
 eventsFolder.Name = "Events"
@@ -51,6 +55,25 @@ local function snapshotActivePlayers()
 	return sorted
 end
 
+local function fireMatchSync()
+	local timeRemaining = math.max(0, state.phaseDuration - state.phaseElapsed)
+	local score = {
+		Attackers = state.roundsWon[MatchState.TEAM.Attackers],
+		Defenders = state.roundsWon[MatchState.TEAM.Defenders],
+	}
+	for _, player in ipairs(Players:GetPlayers()) do
+		local role = state.roles and state.roles[player.UserId]
+		local playerTeam = role and role.team or nil
+		matchStateSync:FireClient(player, {
+			phase = MatchState.phaseOf(state),
+			round = MatchState.roundOf(state),
+			timeRemaining = timeRemaining,
+			score = score,
+			playerTeam = playerTeam,
+		})
+	end
+end
+
 local function beginMatch()
 	local roster = snapshotActivePlayers()
 	MatchState.assignRoles(state, roster)
@@ -59,6 +82,7 @@ local function beginMatch()
 	script:SetAttribute("Round", MatchState.roundOf(state))
 	phaseChanged:Fire(MatchState.phaseOf(state), MatchState.roundOf(state))
 	preRoundStarted:Fire(MatchState.roundOf(state))
+	fireMatchSync()
 end
 
 local function beginNextMatch()
@@ -73,26 +97,31 @@ local function handleEvents(events)
 			script:SetAttribute("Phase", "Live")
 			script:SetAttribute("Round", e.round)
 			phaseChanged:Fire(MatchState.phaseOf(state), e.round)
+			fireMatchSync()
 		elseif e.event == "RoundEnded" then
 			script:SetAttribute("Phase", "RoundEnd")
 			script:SetAttribute("Round", e.round)
 			phaseChanged:Fire(MatchState.phaseOf(state), e.round)
 			roundEnded:Fire(e.round, e.winner, e.reason)
+			fireMatchSync()
 		elseif e.event == "Halftime" then
 			script:SetAttribute("Phase", "Halftime")
 			script:SetAttribute("Round", e.round)
 			phaseChanged:Fire("Halftime", e.round)
+			fireMatchSync()
 		elseif e.event == "PreRoundStarted" then
 			script:SetAttribute("Phase", "PreRound")
 			script:SetAttribute("Round", e.round)
 			phaseChanged:Fire(MatchState.phaseOf(state), e.round)
 			preRoundStarted:Fire(e.round)
+			fireMatchSync()
 		elseif e.event == "MatchEnded" then
 			script:SetAttribute("Phase", "MatchEnd")
 			script:SetAttribute("Round", MatchState.roundOf(state))
 			phaseChanged:Fire(MatchState.phaseOf(state), e.round)
 			roundEnded:Fire(0, e.lastRoundWinner, e.lastRoundReason)
 			matchEnded:Fire(e.result)
+			fireMatchSync()
 			task.wait(5)
 			beginNextMatch()
 		end
