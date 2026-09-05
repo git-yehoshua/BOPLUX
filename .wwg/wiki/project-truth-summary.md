@@ -16,10 +16,10 @@ This summary helps agents orient quickly. The full canonical source remains `pro
 
 - Product identity: BOPLUX — multiplayer round-based first-person Roblox game; 5v5 Plant Mode combining Taguan, Patintero, Agawan Base, and a hidden Impostor.
 - Primary users and roles: Attackers, Defenders, and a secret Impostor (30% chance per round).
-- Canonical scope: 6-round matches (halftime after round 3), capture/jail/rescue, plant objective (2 sites v1.0), Sabotage interaction, Jail-camping meter, round win conditions, Impostor system, server-authoritative Roblox architecture (GDD §15).
+- Canonical scope: typically 6-round matches (7th sudden-death round on a 3–3 tie; halftime after round 3), capture/jail/rescue (breakout frees only the completing player, rewardless), plant objective (2 sites v1.0), Sabotage interaction, Jail-camping meter, round win conditions, Impostor system, server-authoritative Roblox architecture (GDD §15).
 - Architecture truth: server-authoritative; client requests via GDD §15 RemoteEvents; Impostor role state never replicates except to the Impostor's own client.
 - Safety and production boundaries: never trust client RemoteEvents; prototype-stage, no production posture.
-- Current product direction: implement playable v1.0 per the GDD and Open Question Resolutions v1; six §15 systems tracked as Workspace tasks (Match Manager → Player State → Jail → Objective → Audio → Impostor); OQ-010 (tied match) awaits owner decision.
+- Current product direction: playable v1.0 per the GDD and Open Question Resolutions v1 + v2; all six §15 systems implemented and verified (Match Manager → Player State → Jail → Objective → Audio → Impostor); OQ-006 Sabotage interaction implemented; remaining work: release-prep items (CuePlayer fix, HUD pass, 2-player session, audio tuning); all open decisions resolved.
 
 ## Canonical Terms
 
@@ -33,7 +33,8 @@ This summary helps agents orient quickly. The full canonical source remains `pro
 
 - The GDD is the authoritative game design truth; its DECIDED and RECOMMENDED items bind implementation.
 - Open Question Resolutions v1 (source `src_20260905_073942_open_question_resolutions_v1`) resolves OQ-001…OQ-009 and the match-length/halftime gap; all nine entries are owner-DECIDED.
-- Remaining open item: OQ-010 (3–3 tied match outcome) — do not resolve silently.
+- Open Question Resolutions v2 (owner, in-chat 2026-09-05; raw note `wiki/01-sources/raw/notes.md`) resolves OQ-010 (7th sudden-death round on a 3–3 tie), OQ-011 (randomized team assignment at match start), OQ-012 (match-level no-late-join) and OQ-013 (breakout frees only the completing player, rewardless); also re-confirms OQ-006's Tell-on-Sabotage rule.
+- Remaining open item: none — all design decisions are owner-resolved.
 - Full Project Truth remains canonical.
 - This summary is for active loading and should stay compact.
 - Historical notes belong in reports, changelog, ADRs, logs, or history docs.

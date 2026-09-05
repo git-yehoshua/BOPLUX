@@ -21,7 +21,7 @@ This summary helps agents use consistent language quickly. The full canonical so
 - **Report**: evidence, outcome, validation, risk, and next action; not doctrine unless promoted.
 - **Recommendation**: proposed future work; not accepted truth or active scope until reviewed and promoted.
 - **Plant Mode**: the GDD-defined 5v5 objective round format (plant/detonate/defuse), the canonical game mode.
-- **Match / Round / Half / Halftime**: a match is 6 rounds; roles swap after round 3 (3 rounds per side); each round is 180s + 15s pre-round; match winner has the most rounds won.
+- **Match / Round / Half / Halftime**: a match is typically 6 rounds (a 3–3 tie extends to a 7th sudden-death round that decides the match); roles swap after round 3 (3 rounds per side); each round is 180s + 15s pre-round; match winner has the most rounds won.
 - **Impostor**: hidden sabotage role (30% per round); wins if its own team loses; identity revealed at round end; role state server-only.
 - **Pre-round / Round / Halftime**: 15s setup no interactions → 180s live round → halftime swap after round 3 of 6.
 - **Capture / Jail / Breakout / Rescue**: instant ≤1.5m capture; two Jails; 45s breakout; 3s rescue with speed buff + capture immunity.
@@ -30,7 +30,7 @@ This summary helps agents use consistent language quickly. The full canonical so
 - **Sabotage interaction**: Impostor-only, 20s cooldown, contextual (breakout reset near Jail / cancel teammate plant-defuse near site), always fires the audio Tell; own Workspace item.
 - **Sprint stamina**: 6s continuous sprint; 1s capacity per 3s not sprinting; no lockout; flagged for playtest tuning.
 - **Jail-camping meter**: approved via OQ-008 (6m / 10s grace / 20s fill); own Workspace item with independent validation.
-- **OQ status**: OQ-001…OQ-009 resolved (DECIDED) via Open Question Resolutions v1; remaining open item is OQ-010 (3–3 tied match outcome) — do not resolve silently.
+- **OQ status**: OQ-001…OQ-009 resolved (DECIDED) via Open Question Resolutions v1; OQ-010…OQ-013 resolved (DECIDED) via Open Question Resolutions v2. No open design questions remain. Notable v2 rulings: 3–3 ties go to a 7th sudden-death round; teams are randomized at match start (join order not used); no-late-join is match-level; a completed breakout frees only the completing player, rewardless.
 
 ## WWG / Vorter / HomeDesk Terms
 

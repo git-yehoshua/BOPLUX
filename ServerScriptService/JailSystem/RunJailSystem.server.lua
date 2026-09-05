@@ -286,25 +286,21 @@ local function releasePlayer(player, cellId)
 end
 
 local function completeJailChannel(cellId, kind, player)
-	local released = JailState.releaseAll(cellId)
-	local isRescue = kind == "rescue"
-
-	for index, occupant in ipairs(released) do
-		PlayerStateModule.setJailed(occupant, false)
-		teleportTo(occupant, (exteriorPosition(cellId) or Vector3.new(0, 10, 0)) + outwardOffset(index - 1))
-		if isRescue then
+	if kind == "breakout" then
+		releasePlayer(player, cellId)
+	else
+		local released = JailState.releaseAll(cellId)
+		for index, occupant in ipairs(released) do
+			PlayerStateModule.setJailed(occupant, false)
+			teleportTo(occupant, (exteriorPosition(cellId) or Vector3.new(0, 10, 0)) + outwardOffset(index - 1))
 			PlayerStateModule.grantSpeedBuff(occupant, JailConfig.BuffSeconds)
 			PlayerStateModule.grantCaptureImmunity(occupant, JailConfig.BuffSeconds)
+			playerReleased:Fire(occupant, cellId)
 		end
-		playerReleased:Fire(occupant, cellId)
-	end
-
-	if isRescue then
 		PlayerStateModule.grantSpeedBuff(player, JailConfig.BuffSeconds)
 		PlayerStateModule.grantCaptureImmunity(player, JailConfig.BuffSeconds)
+		jailReleasedAll:Fire(cellId, kind, true)
 	end
-
-	jailReleasedAll:Fire(cellId, kind, isRescue)
 	updateCellAttributes(cellId)
 end
 

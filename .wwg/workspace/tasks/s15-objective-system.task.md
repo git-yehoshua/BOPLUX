@@ -73,5 +73,13 @@ Authoritative plant / detonation / defuse flow at plant sites.
 - Depends on Match Manager (round phase legality, win evaluation) and Player State (roles).
 - Consumed later by Impostor System (Sabotage plant-defuse cancel hook) — interface only.
 
+## Retrospective
+
+- **Keep doing**: debug `defuse` command pattern (mirror of Jail System's DebugMode affordance); XZ-only site-range for movement cancellation (cleaner than full 3D); server-timed plant/defuse/detonation via Heartbeat (never client-timed); the site `Interior` marker carrying observability attributes (SiteId, Planted, ChannelKind, PlantProgress, DefuseProgress, DetonationRemaining) as the decoupled state surface.
+- **Add (next task / future)**: automated unit tests for ObjectiveState (the pure module, like ImpostorState and JailState). The Heartbeat-driven channel step and detonation countdown are complex enough to warrant test coverage.
+- **Remove / simplify**: the duplicate `Dependency Notes` block (appears twice in the file) — consolidate to one.
+- **Gaps**: the legitimate `RequestDefuseHold` Defender path was verified via debug `defuse` command only (bypassing role check); real Defender defuse was never tested with a second client. The all-jailed Defender-win via Objective System was never tested.
+- **Carryovers**: Objective System is consumed by Impostor System (Sabotage plant-defuse cancel hook); the site Interior attribute pattern is stable and unchanged.
+
 ## Report Path
 `.wwg/reports/agent-implementation-log.md`; `.wwg/workspace/current-task.md`.

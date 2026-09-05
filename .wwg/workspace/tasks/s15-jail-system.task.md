@@ -62,5 +62,13 @@ Authoritative capture, jailing, breakout, reset, and rescue behavior.
 - Depends on Match Manager (roles, round state) and Player State (jail/capture status).
 - Independent sibling items (tracked separately): Jail-camping meter (s15-jail-camping-meter-oo008.task.md) and Sabotage breakout-reset (s15-sabotage-interaction-oo006.task.md) — implement hooks only.
 
+## Retrospective
+
+- Keep: server-measured channel durations, per-cell channel exclusivity (OQ-009), attribute-driven observability + debug-only bypasses gated behind DebugMode, the pure `JailState` module now unit-covered.
+- Add: a real 2-player session still needed before release (capture, reset-on-touch, rescue-with-occupants, all-jailed Defender win, multi-interactor timing). Consider clearer naming for the release helpers now that breakout and rescue diverge (single vs all).
+- Remove/simplify: the former "breakout releases everyone" assumption is replaced by OQ-013 (frees only the completing player) — remove any stale all-occupant breakout references in docs/UI text.
+- Gaps: role-dependent Jail paths unverifiable solo are deferred to the 2-player session; not blockers.
+- Carryover: Impostor Sabotage breakout-reset and the Jail-camping meter (OQ-008) are separate tracked items (`s15-sabotage-interaction-oo006.task.md`, `s15-jail-camping-meter-oo008.task.md`) that hook this system later.
+
 ## Report Path
 `.wwg/reports/agent-implementation-log.md`; `.wwg/workspace/current-task.md`.

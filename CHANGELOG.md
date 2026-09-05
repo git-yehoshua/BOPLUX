@@ -2,6 +2,76 @@
 
 All notable changes to BOPLUX are recorded here in non-technical, outcome-based language.
 
+## [0.1.9] - 2026-09-05
+
+### Fixed
+
+- **CuePlayer audio fix**: The audio cue listener (`StarterPlayerScripts/CuePlayer.local.luau`) was attempting to set `Sound.Position`, a property that does not exist in Roblox. This caused all audio cues (breakout warning and Impostor Tell) to fail silently with console errors. Fixed by creating a small anchored Part (`SoundAttachment`) at the target position, parenting the Sound to it, and destroying both after playback. Added proper 3D spatialization settings (`RollOffMode = InverseTapered`, `DopplerMode = Off`, `EmitterSize = 1`).
+
+- **ImpostorClient banner fix**: The notification banner background (`StatusLabel` in `StarterPlayerScripts/ImpostorClient.local.luau`) persisted visible alongside the player name display after the notification text was cleared. Fixed by setting `label.BackgroundTransparency = 1` initially (invisible), `0.35` when text appears, and resetting to `1` after the 6s delay when text clears.
+
+## [0.1.8] - 2026-09-05
+
+### Added
+
+- The Impostor's Sabotage interaction is now live. The Impostor can activate it near a Jail exterior or a plant site — never at arbitrary range, never without a valid target, never without a 20-second cooldown enforced server-side.
+- Near a Jail with an active breakout, sabotage silently resets the breakout progress back to zero (the jailed player must start over). Near a plant site where a teammate is actively planting or defusing, sabotage silently cancels that teammate's channel.
+- Every sabotage activation plays the localized audio Tell so nearby players hear the cue — the Impostor cannot sabotage silently.
+- The server decides everything: whether the requester is actually the Impostor (read from server-only state, never from client claims), whether the target is in range, whether the cooldown has expired, and whether the targeted interaction actually exists. If any check fails, nothing happens.
+
+### Notes
+
+- All six core server systems plus the approved Sabotage interaction are now implemented and covered by 54 automated unit tests, all passing.
+- Presentation is still placeholder (console + one simple text label); a proper HUD pass is queued before release.
+- A pre-existing audio playback bug was identified during testing (sounds cannot be positioned in 3D space with the current approach); a fix is queued.
+
+## [0.1.7] - 2026-09-05
+
+### Added
+
+- The hidden Impostor is now live. Every round has a 30% chance of one secret saboteur on either team, chosen before anyone gains control of the round. The Impostor plays as a normal teammate but also receives a private sabotage objective (either reset a breakout at a specific Jail or cancel a plant/defuse at a specific site), chosen from targets that actually exist on the map.
+- Round-end identity reveal: each round ends with a single server-side broadcast naming the round's Impostor (if any) and whether the Impostor won or lost, so the social-deduction loop actually closes every round.
+- The pre-round Impostor Warning is now a real, identical broadcast to every player every pre-round — including rounds with no Impostor — so no one can deduce role information from the warning itself.
+- Role secrecy is enforced by construction: the Impostor's identity exists only inside server-only storage and is delivered solely to that one player's client. A client-side sweep of 619 replicated instances found no trace of role data.
+- Sound cues now actually play: the cue listener lives in the player's script container where client scripts can execute (it previously sat where scripts never run, so no one could hear anything).
+
+### Notes
+
+- All six core server systems (match flow, player state, jail, objective, audio, impostor) are now implemented and covered by 29 automated unit tests, all passing.
+- The Impostor's actual Sabotage interaction (the OQ-006 mechanic) is the last remaining tracked item — the system it depends on now exists.
+- Presentation is still placeholder (console + one simple text label); a proper HUD pass is queued before release.
+
+## [0.1.6] - 2026-09-05
+
+### Added
+
+- Tied matches are now decided: if the six rounds finish 3–3, the match continues to a 7th deciding round in the same format, and the team that wins it takes the match. Roles keep rotating exactly as before, so the 7th round plays under the same side arrangement as the first three.
+- Teams are now randomized at the start of every match instead of being filled in join order — everyone present is shuffled and split evenly into Attackers and Defenders.
+- A completed Jail breakout now frees only the player who finished the hold (with no bonus). Rescues still free everyone in the Jail and give the speed/immunity reward. The earlier behavior where a breakout freed an entire cell is gone.
+- Sound cues are now actually audible: a small client listener plays the breakout warning and the Impostor "Tell" as positional sounds in the world, so the cue design can be heard and checked before the Impostor system lands. The listener just needs override sounds and volume tuning.
+- The first automated test harness is in place: 13 behavior tests covering match states (round cycling, sudden death, randomized teams, win evaluation) and Jail release rules all pass. Future logic changes to these pure modules can be regression-checked without launching a play session.
+
+### Notes
+
+- "No late join" is now confirmed to mean: wait out the current match, join the next one. This was previously an assumption and is now a decided rule.
+- No open design questions remain — the last four (tie handling, team assignment, late-join scope, breakout release scope) were decided by the project owner.
+- Playing a character during the verification session was skipped this time (logic now covered by the automated harness); a two-player session for role-dependent paths is still planned before release.
+- Impostor system — the last §15 system — remains queued and will use the Tell hook and the now-audible cue listener.
+
+## [0.1.5] - 2026-09-05
+
+### Added
+
+- The server-owned audio system is live: an in-progress Jail breakout now emits a loud warning sound (a placeholder ping for now) from the Jail's location, repeating every few seconds while the breakout continues, and only players close enough are told to play it.
+- A second cue, the Impostor "Tell", is now wired as a decoupled hook: whatever interaction the hidden Impostor system later triggers can request a localized spatial sound from any world position, and only nearby players are told to play it. Neither cue ever reveals who the Impostor is — the broadcast just says "play this sound here".
+- All audio is server computed: the server decides who is in range before any sound instruction is sent, and the instructions carry only a sound and a position.
+
+### Notes
+
+- The sound files are placeholder engine beeps; real audio and the audible-distance/interval values (30 m, 20 m, 3 s) are expected to be tuned before release.
+- The Impostor system — the last §15 system — still remains as a tracked task, and will consume the new Tell hook.
+- Unit-test harness is still pending.
+
 ## [0.1.4] - 2026-09-05
 
 ### Added
@@ -15,7 +85,7 @@ All notable changes to BOPLUX are recorded here in non-technical, outcome-based 
 
 - Three interpretation points surfaced during implementation for owner confirmation: the site's interaction range is treated horizontally (standing on a site's footprint, not a magic height), and on the same tick a last-instant defuse is judged before detonation resolves.
 - The Defender defuse was verified live with the only-role check bypassed through a debug command; a full two-player session is still needed to exercise it through the normal route.
-- Remaining §15 systems (Audio, Impostor) are still queued as tracked Workspace tasks. Unit-test harness is still pending.
+- Remaining §15 systems (Impostor) are still queued as a tracked Workspace task. Unit-test harness is still pending.
 
 ## [0.1.3] - 2026-09-05
 

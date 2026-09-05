@@ -49,5 +49,13 @@ Authoritative per-player state: movement, stamina, team/role, capture/jail statu
 ## Dependency Notes
 - Depends on Match Manager (roles/halftime); consumed by Jail System and Objective System.
 
+## Retrospective
+
+- **Keep doing**: collision groups via PlayerStateModule functions (setJailed, grantCaptureImmunity, grantSpeedBuff) as the state surface; PhaseChanged wiring (PreRound→syncAllRoles, Live→resetAllPlayers, Halftime→syncAllRoles) as the lifecycle contract; the `requestSprint` deny-if-jailed-or-no-stamina guard as the single source of truth.
+- **Add (next task / future)**: a thin client-side stamina UI bound to the server state; the `StaminaConstants.lua` shared module should be consumed by the client for display (it's currently server-only and client-visible but not yet wired to a HUD).
+- **Remove / simplify**: the `CharacterAdded` signature fix (now `onCharacterAdded(player, character)`) — the old bug was caught early and the fix is stable.
+- **Gaps**: no automated unit tests for PlayerState (the pure module was never isolated for testability — this is a known pattern gap; future systems should follow the ImpostorState model of a testable pure module). Sprint/regen timing was verified via manual play only.
+- **Carryovers**: Player State is consumed by Jail and Objective systems; the collision-group approach is stable and unchanged.
+
 ## Report Path
 `.wwg/reports/agent-implementation-log.md`; `.wwg/workspace/current-task.md`.

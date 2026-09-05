@@ -33,7 +33,7 @@ Server-authoritative driving of round/match state, phase transitions, timers, ro
 ## Acceptance Criteria
 - A match completes 6 rounds with halftimes exactly as defined.
 - Pre-round interaction lock is enforced server-side.
-- Match end evaluates rounds-won per team; 3–3 produces the OQ-010 pending signal, not a guessed winner.
+- Match end evaluates rounds-won per team; a 3–3 tie continues to a 7th sudden-death round that decides the match (OQ-010).
 - No RemoteEvents are client-fireable against Match Manager state.
 
 ## Validation / Test Plan
@@ -45,9 +45,22 @@ Server-authoritative driving of round/match state, phase transitions, timers, ro
 - Result: PASS — state machine verified end-to-end in live play mode
 - If no tests were added, reason: no unit-test harness exists yet; logic isolated in pure module so tests can be added when harness lands
 
+## Verification Evidence
+- Live play session (single client): match auto-starts when player joins; PreRound phase runs 15s → transitions to Live; injected outcome via `RoundOutcomeReported` fires RoundEnd after 2s → transitions to next PreRound; sudden-death round 7 confirmed (OQ-010); randomized team assignment confirmed (OQ-011); no runtime errors in console; byte-exact repo↔Studio sync confirmed for all Match Manager files.
+- Test harness (added this session, 29 → 54 tests): 13 MatchState unit tests covering team split (5v5/1v0/3v2), sudden-death (3-3 tie → round 7), decisive match (no sudden death), outcome ignored outside live phase. All pass via `require(RunTests)()`.
+- Coverage gaps (deferred): 2-player full-match walk; randomized team parity complaint handling; Impostor cross-system integration (separate tickets).
+
 ## Dependency Notes
 - Depends on: OQ-010 owner decision for the decisive-end/tie edge (non-blocking for all decided paths).
 - Declares interfaces consumed later by: Player State (role assignment), Jail System, Objective System (round-outcome reports), Impostor System (pre-round hook).
+
+## Retrospective
+
+- Keep: pure testable `MatchState` module (decision logic now unit-covered), BindableEvent outcome bus, attribute-based cross-system reads, byte-exact repo↔Studio sync checks, the lightweight test runner for logic systems.
+- Add: TestEZ/CI execution once the runner matters beyond a handful of modules; expose a "round 7 / sudden death" indicator for players and UI when the HUD work lands.
+- Remove/simplify: the `tie_pending_oq010` handshake path is now unreachable on the normal path (OQ-010 decided: sudden-death round 7); the status string remains only as an internal fallback and can be dropped when Impostor work touches `MatchState`.
+- Gaps: randomized team assignment (OQ-011) has no user-facing team pick or parity-complaint handling — effectively polish, deferred; 2-player full-match walk not yet run (live sudden-death was driven by injected outcomes).
+- Carryover: Impostor System consumes `PreRoundStarted` and the decided match-cycle; the `Round`-attribute consumers (Jail, Objective) rely on the `MatchState.roundOf` read used at MatchEnded.
 
 ## Report Path
 `.wwg/reports/agent-implementation-log.md` (entry for this task); status updated in `.wwg/workspace/current-task.md`.

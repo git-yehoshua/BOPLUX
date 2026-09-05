@@ -32,6 +32,14 @@ The authoritative game design source is **Core Game Design Specification v1.1 �
 - OQ-008: Jail-camping meter approved with parameters — tracked as its own Workspace item with independent validation.
 - OQ-009: Only the first interactor progresses a rescue/breakout attempt; additional present teammates do not stack or accelerate it.
 
+**Open Question Resolutions v2** (owner, in-chat 2026-09-05; raw note in `wiki/01-sources/raw/notes.md`) adds and confirms:
+
+- OQ-010: A 3–3 tied match (most rounds won equal after 6) goes to a 7th sudden-death round in the same 3-minute format; roles follow the normal alternation (round 7 = block-boundary swap, matching rounds 1–3 arrangement); the round-7 winner wins the match outright. Ties are now fully decided.
+- OQ-011: Team assignment is randomized at match start — all players are shuffled, split into two groups, first half initial Attackers and second half initial Defenders (join order is NOT used).
+- OQ-012: "No late join" confirmed as match-level — a late join sits out the current match and enters the next one (no round-level joining).
+- OQ-013: A completed breakout frees ONLY the completing player, rewardless (rejects release-all). Rescue still releases all occupants with rewards.
+- OQ-006 re-confirmed: Sabotage completion always fires the audio Tell.
+
 ## Product Identity
 
 - Product name: BOPLUX
@@ -49,14 +57,14 @@ The authoritative game design source is **Core Game Design Specification v1.1 �
 
 This project currently includes:
 
-- 5v5 asymmetric match format: a **match is 6 rounds** (180s each, 15s pre-round); roles swap after **round 3** (true halftime, 3 rounds per side); match winner = most rounds won across all 6; cross-team collision disabled
-- Capture & Jail: instant capture ≤1.5m, two Jails, 45s continuous breakout, 3s rescue, rescue reward (speed buff + temporary capture immunity)
+- 5v5 asymmetric match format: a **match is typically 6 rounds** (180s each, 15s pre-round); roles swap after **round 3** (true halftime, 3 rounds per side); match winner = most rounds won across all 6; a 3–3 tie triggers a **7th sudden-death round** (same 180s format) that decides the match outright; cross-team collision disabled
+- Capture & Jail: instant capture ≤1.5m, two Jails, 45s continuous breakout that frees **only the completing player without reward** (OQ-013), 3s rescue that frees all occupants with rescue reward (speed buff + temporary capture immunity)
 - Plant objective: **2 plant sites for v1.0** (a third deferred until 2-site rounds are validated), 5s plant, 45s detonation countdown, 7s defuse
 - Round win conditions (GDD §5.4): plant detonates = Attacker win; timer expiry pre-plant, defuse, or all Attackers jailed = Defender win
 - Impostor system: 30% spawn, pre-round warning, spatial "Tell" cue, server-only role state, plus the approved **Sabotage interaction** (20s cooldown; contextual: resets an in-progress breakout when used near a Jail, or silently cancels a teammate's active plant/defuse when used near a plant site) — tracked as its own Workspace item with independent validation
 - **Jail-camping meter** (approved): 6m proximity radius, 10s grace period, fills over 20s continuous camping, depletes when the Defender leaves the radius — tracked as its own Workspace item with independent validation
 - Sprint/stamina: 6s continuous sprint, regen 1s sprint capacity per 3s not sprinting, no lockout (flagged for playtest tuning)
-- No late join for v1.0 (players wait for the next round)
+- No late join for v1.0 (players who arrive mid-match wait for the next match — OQ-012)
 - Systems: Match Manager, Player State, Jail System, Objective System, Audio System, Impostor System (GDD §7, expanded in §15)
 - Server-authoritative Roblox implementation contract (GDD §15) — clients only request; server validates range, timing, state
 
@@ -86,7 +94,7 @@ Critical terms:
 Accepted architecture:
 
 - Roblox client–server, server-authoritative for all gameplay-affecting state. The client only fires request remotes: `RequestSprint`, `RequestCapture`, `RequestBreakoutHold`, `RequestBreakoutRelease`, `RequestJailReset`, `RequestRescue`, `RequestPlantHold`, `RequestPlantRelease`, `RequestDefuseHold`, `RequestDefuseRelease`, `RequestSabotage`. Server validates range ≤1.5m (capture), stationarity, team/state, hold durations (server-measured), sabotage cooldown/context (plant-site or Jail-exterior adjacency, targeted interaction exists), and one-active-interactor-per-target (GDD §15 + OQ-006)
-- Match structure drives phases/timer/win conditions server-side: per-round phases (pre-round 15s → round 180s) and match-level state (6 rounds, roles swap after round 3, match winner by most rounds won)
+- Match structure drives phases/timer/win conditions server-side: per-round phases (pre-round 15s → round 180s) and match-level state (typically 6 rounds, roles swap at block boundaries after round 3 and at round 6→7 for sudden death, match winner by most rounds won, tied 3–3 → sudden-death round 7)
 - Audio System in `ReplicatedStorage`: server fires `PlayBreakoutWarning`, `PlayImpostorTell`, and the Sabotage "Tell" with position-only payload after computing audibility; never role information
 - Impostor System lives exclusively in `ServerScriptService`; role state is never replicated to any client except the Impostor's own client (GDD §15 design note)
 - Jail-camping meter is server-evaluated proximity logic (6m/10s grace/20s fill per OQ-008), handled as its own system item
@@ -117,9 +125,9 @@ Do not claim or imply production readiness for:
 
 Current direction:
 
-- Implement the six §15 server-authoritative systems as tracked Workspace tasks, in order: Match Manager → Player State → Jail System → Objective System → Audio System → Impostor System (last, due to dependencies)
+- Implement the six §15 server-authoritative systems as tracked Workspace tasks, in order: Match Manager → Player State → Jail System → Objective System → Audio System → Impostor System (last, due to dependencies) — **all six now implemented and verified; OQ-006 Sabotage interaction also implemented; remaining work: release-prep items (CuePlayer fix, HUD pass, 2-player session, audio tuning)**
 - OQ-006 Sabotage interaction and OQ-008 Jail-camping meter are each their own Workspace task with independent validation (not folded into the existing Jail/Objective tasks)
-- All previously UNDECIDED items are owner-resolved except OQ-010 (3–3 tied match outcome), which awaits owner decision
+- All previously UNDECIDED items and all surfaced implementation assumptions (OQ-001 … OQ-013) are owner-resolved (Open Question Resolutions v1 + v2); no open design questions remain
 - Track playtest flags: sprint tuning (OQ-007), objective rushing and single-player isolation behaviors (GDD §16.4)
 
 Avoid drifting into:

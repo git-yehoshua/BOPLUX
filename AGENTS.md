@@ -213,6 +213,20 @@ README:
 - Green outputs should not over-warn.
 - Final responses should include what changed, what truth/docs were updated, what tests were added or run, and whether any alignment warning remains.
 
+## Task Retrospective & Checkpoints
+
+Every meaningful task closeout must include a **Retrospective** section that answers, from the perspective of what we just learned:
+
+- What went well / what to keep doing.
+- What to add (now or in a future task).
+- What to remove, simplify, or stop doing.
+- Gaps found (evidence, coverage, design ambiguity) and whether they are deferred or must be fixed before release.
+- Carryovers: anything that belongs in the next task instead of expanding current scope.
+
+Record the retrospective in the task ticket and mention it in the `agent-implementation-log.md` entry.
+
+A **checkpoint** is a user-requested step-back that pauses forward work: summarize current state, expected output/behavior, open risks, and pending decisions; do not start new implementation until the user says continue. It can be requested at any time during or between tasks. Task tickets and the natural-next-step line in `current-task.md` should make the checkpoint easy to invoke.
+
 ## Handoff / Reporting Rules
 
 - Report what changed, what was validated, what truth/context/governance surfaces were updated, and what risks remain.

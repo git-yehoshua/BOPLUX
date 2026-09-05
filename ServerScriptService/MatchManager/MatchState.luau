@@ -75,10 +75,14 @@ local function recordRoundWin(state, winner, reason)
 end
 
 local function endRound(state, winner, reason, events)
-	if state.roundNumber >= MatchConfig.RoundsPerMatch then
+	recordRoundWin(state, winner, reason)
+	local finalRound = state.roundNumber >= MatchConfig.RoundsPerMatch
+	if finalRound and state.roundNumber == MatchConfig.RoundsPerMatch then
+		finalRound = state.roundsWon[TEAM.Attackers] ~= state.roundsWon[TEAM.Defenders]
+	end
+	if finalRound then
 		state.phase = PHASE.MatchEnd
 		state.matchResult = buildMatchResult(state.roundsWon)
-		recordRoundWin(state, winner, reason)
 		table.insert(events, {
 			event = "MatchEnded",
 			result = state.matchResult,
@@ -86,7 +90,6 @@ local function endRound(state, winner, reason, events)
 			lastRoundReason = reason,
 		})
 	else
-		recordRoundWin(state, winner, reason)
 		state.phase = PHASE.RoundEnd
 		state.phaseDuration = MatchConfig.RoundEndGraceDuration
 		state.phaseElapsed = 0
@@ -119,8 +122,17 @@ function MatchState.new()
 end
 
 function MatchState.assignRoles(state, players)
-	for index, player in ipairs(players) do
-		local initialTeam = index <= MatchConfig.TeamSize and TEAM.Attackers or TEAM.Defenders
+	local shuffled = {}
+	for _, player in ipairs(players) do
+		table.insert(shuffled, player)
+	end
+	for i = #shuffled, 2, -1 do
+		local j = math.random(i)
+		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+	end
+	local attackerCount = math.floor((#shuffled + 1) / 2)
+	for index, player in ipairs(shuffled) do
+		local initialTeam = index <= attackerCount and TEAM.Attackers or TEAM.Defenders
 		state.roles[player.UserId] = {
 			player = player,
 			initialTeam = initialTeam,
@@ -189,8 +201,8 @@ function MatchState.step(state, dt)
 	elseif state.phase == PHASE.RoundEnd then
 		if remaining <= 0 then
 			local nextRound = state.roundNumber + 1
-			local enteredHalfTwo = nextRound == MatchConfig.RoundsPerHalf + 1
-			if enteredHalfTwo then
+			local enteringHalf = nextRound > 1 and (nextRound - 1) % MatchConfig.RoundsPerHalf == 0
+			if enteringHalf then
 				MatchState.swapRoles(state)
 				table.insert(events, {
 					event = "Halftime",

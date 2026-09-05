@@ -16,9 +16,10 @@ Agents must preserve these terms across:
 | Concept | Canonical Term | Allowed Internal Terms | Discouraged / Forbidden Unless Approved |
 |---|---|---|---|
 | The team objective | Plant | plant the objective | bomb, spike, charge (no carryable item exists — planting is a stationary channeled interaction) |
-| Match-level unit (6 rounds, roles swap after round 3) | Match | bout, game | n/a |
+| Match-level unit (6 rounds, roles swap after round 3; tied 3–3 extends to a 7th round) | Match | bout, game | n/a |
 | Three-round team side within a match | Half | side | n/a |
-| Point where roles swap (after round 3 of 6) | Halftime | side swap, mid-match | n/a |
+| Point where roles swap (after round 3 of 6; again entering the 7th round) | Halftime | side swap, mid-match | n/a |
+| Deciding round of a 3–3 tied match | Sudden death round | 7th round, deciding round | overtime, extra time |
 | Instant arrest of an Attacker | Capture | tag, catch | n/a |
 | Detention location | Jail | cell, cage | n/a |
 | Self-release by a jailed player | Breakout | jailbreak | n/a |
@@ -32,6 +33,7 @@ Agents must preserve these terms across:
 | Impostor-specific action that resets breakout or cancels a teammate's plant/defuse | Sabotage interaction | sabotage (verb only) | n/a |
 | Secret saboteur | Impostor | imposter (misspelling), traitor, saboteur | n/a |
 | Pre-round broadcast | Impostor Warning | warning | n/a |
+| Round-end identity broadcast | Impostor Reveal | reveal, round-over reveal | n/a (fires once per round end; userId nil when no Impostor was active) |
 | Spatial sabotage cue | Impostor "Tell" | tell, tell cue | n/a |
 | Anti-snowball jail system | Jail-camping meter | anti-facecamp meter | n/a (approved via OQ-008; own Workspace item) |
 | Spot where a plant is placed | Plant site | site | n/a (2 sites for v1.0 per OQ-004) |
@@ -66,9 +68,9 @@ Agents must preserve these terms across:
 
 | Domain Concept | Canonical Term | Notes |
 |---|---|---|
-| Full competitive unit | Match | 6 rounds total per Open Question Resolutions v1 |
+| Full competitive unit | Match | 6 rounds total per Open Question Resolutions v1; a 3–3 tie extends to a 7th sudden-death round (OQ-010) |
 | Team side before the swap | Half | 3 rounds per side |
-| Role swap point | Halftime | Roles swap after round 3 of 6 |
+| Role swap point | Halftime | Roles swap after round 3 of 6; block-boundary swap repeats entering the 7th round |
 | Single competitive unit | Round | 180s + 15s pre-round |
 | Setup window | Pre-round | 15s; full movement, no capture/plant/rescue interactions |
 

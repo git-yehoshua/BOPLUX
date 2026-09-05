@@ -89,7 +89,7 @@ local function handleEvents(events)
 			preRoundStarted:Fire(e.round)
 		elseif e.event == "MatchEnded" then
 			script:SetAttribute("Phase", "MatchEnd")
-			script:SetAttribute("Round", 6)
+			script:SetAttribute("Round", MatchState.roundOf(state))
 			phaseChanged:Fire(MatchState.phaseOf(state), e.round)
 			roundEnded:Fire(0, e.lastRoundWinner, e.lastRoundReason)
 			matchEnded:Fire(e.result)
