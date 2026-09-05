@@ -1,0 +1,355 @@
+{
+  "kind": "workspace",
+  "target": "C:\\Users\\Admin\\Documents\\BOPLUX",
+  "targetDisplay": ".",
+  "command": "wwg start . --profile game --agent generic --governance standard --force",
+  "dryRun": false,
+  "sourceArtifactsRead": [
+    "wiki/02-project/README.md",
+    "wiki/02-project/agent-team-governance.md",
+    "wiki/02-project/business-model.md",
+    "wiki/02-project/glossary.md",
+    "wiki/02-project/product-vision.md",
+    "wiki/02-project/project-brief.md",
+    "wiki/02-project/success-metrics.md",
+    "wiki/02-project/target-users.md",
+    "wiki/03-requirements/README.md",
+    "wiki/03-requirements/acceptance-criteria.md",
+    "wiki/03-requirements/constraints.md",
+    "wiki/03-requirements/functional-requirements.md",
+    "wiki/03-requirements/non-functional-requirements.md",
+    "wiki/03-requirements/user-stories.md",
+    "wiki/05-architecture/README.md",
+    "wiki/05-architecture/api-map.md",
+    "wiki/05-architecture/data-model.md",
+    "wiki/05-architecture/deployment-model.md",
+    "wiki/05-architecture/integration-map.md",
+    "wiki/05-architecture/security-model.md",
+    "wiki/05-architecture/system-overview.md",
+    "wiki/06-domain/README.md",
+    "wiki/06-domain/edge-cases.md",
+    "wiki/06-domain/entities.md",
+    "wiki/06-domain/rules.md",
+    "wiki/06-domain/workflows.md",
+    "wiki/07-ux/README.md",
+    "wiki/07-ux/content-guidelines.md",
+    "wiki/07-ux/design-preferences.md",
+    "wiki/07-ux/design-principles.md",
+    "wiki/07-ux/reference-screenshots.md",
+    "wiki/07-ux/screens.md",
+    "wiki/07-ux/user-journeys.md",
+    "wiki/08-operations/README.md",
+    "wiki/08-operations/incident-log.md",
+    "wiki/08-operations/known-issues.md",
+    "wiki/08-operations/monitoring.md",
+    "wiki/08-operations/operations-report-template.md",
+    "wiki/08-operations/public-discovery.md",
+    "wiki/08-operations/public-surface-updates.md",
+    "wiki/08-operations/qa-checklists.md",
+    "wiki/08-operations/runbooks.md",
+    "wiki/08-operations/signoff-learnings.md",
+    "wiki/09-agent-context/README.md",
+    "wiki/09-agent-context/canonical-context-policy.md",
+    "wiki/09-agent-context/claude-context.md",
+    "wiki/09-agent-context/codex-context.md",
+    "wiki/09-agent-context/cursor-context.md",
+    "wiki/09-agent-context/project-master-context.md",
+    "wiki/09-agent-context/public-discovery-context.md",
+    "wiki/09-agent-context/reusable-prompts.md",
+    "wiki/09-agent-context/runtime-context.md",
+    "wiki/12-maintenance/README.md",
+    "wiki/12-maintenance/change-classification.md",
+    "wiki/12-maintenance/context-maintenance-matrix.md",
+    "wiki/12-maintenance/drift-policy.md",
+    "wiki/12-maintenance/maintenance-contract.md",
+    "wiki/index.md",
+    "wiki/principles/README.md",
+    "wiki/principles/accessibility-principles.md",
+    "wiki/principles/ai-agent-interface-principles.md",
+    "wiki/principles/changelog-product-memory-principle.md",
+    "wiki/principles/readme-front-door-principle.md",
+    "wiki/principles/ui-ux-simplicity-principles.md",
+    "wiki/profiles/README.md",
+    "wiki/profiles/game/README.md",
+    "wiki/profiles/game/governance-additions.md",
+    "wiki/profiles/game/wiki-additions.md",
+    "wiki/profiles/game/workspace-additions.md"
+  ],
+  "missingCanonicalSources": [],
+  "writes": [
+    {
+      "path": "workspace/context/project-context.md",
+      "action": "updated",
+      "ownership": "wwg-generated",
+      "reason": "Generated section COMPILED_CONTEXT was not found.",
+      "sectionName": "COMPILED_CONTEXT",
+      "addedLines": 474,
+      "removedLines": 42
+    },
+    {
+      "path": "workspace/context/architecture-context.md",
+      "action": "updated",
+      "ownership": "wwg-generated",
+      "reason": "Generated section COMPILED_CONTEXT was not found.",
+      "sectionName": "COMPILED_CONTEXT",
+      "addedLines": 406,
+      "removedLines": 8
+    },
+    {
+      "path": "workspace/context/domain-context.md",
+      "action": "updated",
+      "ownership": "wwg-generated",
+      "reason": "Generated section COMPILED_CONTEXT was not found.",
+      "sectionName": "COMPILED_CONTEXT",
+      "addedLines": 213,
+      "removedLines": 10
+    },
+    {
+      "path": "workspace/context/ux-context.md",
+      "action": "updated",
+      "ownership": "wwg-generated",
+      "reason": "Generated section COMPILED_CONTEXT was not found.",
+      "sectionName": "COMPILED_CONTEXT",
+      "addedLines": 307,
+      "removedLines": 13
+    },
+    {
+      "path": "workspace/context/governance-context.md",
+      "action": "updated",
+      "ownership": "wwg-generated",
+      "reason": "Generated section COMPILED_CONTEXT was not found.",
+      "sectionName": "COMPILED_CONTEXT",
+      "addedLines": 410,
+      "removedLines": 8
+    },
+    {
+      "path": "workspace/context/context-maintenance-matrix.md",
+      "action": "updated",
+      "ownership": "wwg-generated",
+      "reason": "Generated section COMPILED_CONTEXT was not found.",
+      "sectionName": "COMPILED_CONTEXT",
+      "addedLines": 72,
+      "removedLines": 32
+    },
+    {
+      "path": "workspace/prompts/task-router.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/prompts/feature-implementation.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/prompts/bug-fix.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/prompts/runtime-infrastructure.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/prompts/public-surface-update.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/prompts/public-discovery-maintenance.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/prompts/production-monitoring.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/agents/codex.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/agents/claude-code.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/agents/cursor.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/agents/vscode.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/current-task.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/AGENTS.md",
+      "action": "updated",
+      "ownership": "wwg-generated",
+      "reason": "Generated section PROJECT_CONTEXT was not found.",
+      "sectionName": "PROJECT_CONTEXT",
+      "addedLines": 172,
+      "removedLines": 48
+    },
+    {
+      "path": "workspace/AGENTS.md",
+      "action": "unchanged",
+      "ownership": "wwg-co-maintained",
+      "sectionName": "SELECTED_PROFILES"
+    },
+    {
+      "path": "workspace/AGENTS.md",
+      "action": "unchanged",
+      "ownership": "wwg-co-maintained",
+      "sectionName": "MAINTENANCE_CONTRACT"
+    },
+    {
+      "path": "AGENTS.md",
+      "action": "updated",
+      "ownership": "wwg-co-maintained",
+      "sectionName": "PROJECT_CONTEXT",
+      "addedLines": 2,
+      "removedLines": 0
+    },
+    {
+      "path": "AGENTS.md",
+      "action": "unchanged",
+      "ownership": "wwg-co-maintained",
+      "sectionName": "SELECTED_PROFILES"
+    },
+    {
+      "path": "AGENTS.md",
+      "action": "updated",
+      "ownership": "wwg-co-maintained",
+      "sectionName": "MAINTENANCE_CONTRACT",
+      "addedLines": 1,
+      "removedLines": 1
+    },
+    {
+      "path": "workspace/skills/change-classifier.skill.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/skills/context-skill-maintenance.skill.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/skills/drift-detector.skill.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/skills/regression-guardrail-maintenance.skill.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/skills/task-router.skill.md",
+      "action": "unchanged",
+      "ownership": "wwg-generated"
+    },
+    {
+      "path": "workspace/skills/context-refresh.skill.md",
+      "action": "created",
+      "ownership": "missing"
+    },
+    {
+      "path": "workspace/skills/task-ticket-writer.skill.md",
+      "action": "created",
+      "ownership": "missing"
+    },
+    {
+      "path": "workspace/skills/wiki-ingest.skill.md",
+      "action": "created",
+      "ownership": "missing"
+    },
+    {
+      "path": "workspace/skills/wiki-lint.skill.md",
+      "action": "created",
+      "ownership": "missing"
+    },
+    {
+      "path": "workspace/skills/README.md",
+      "action": "updated",
+      "ownership": "wwg-generated",
+      "reason": "Generated section SKILL_INDEX was not found.",
+      "sectionName": "SKILL_INDEX",
+      "addedLines": 6,
+      "removedLines": 14
+    },
+    {
+      "path": "workspace/skills/skill-index.md",
+      "action": "created",
+      "ownership": "missing"
+    },
+    {
+      "path": ".wwg/config/skill-manifest.yaml",
+      "action": "updated",
+      "ownership": "wwg-generated",
+      "reason": "Skill Manifest records project skill state only; recommended/reference-only skills are not runtime-active."
+    }
+  ],
+  "filesCreated": [
+    "workspace/skills/context-refresh.skill.md",
+    "workspace/skills/task-ticket-writer.skill.md",
+    "workspace/skills/wiki-ingest.skill.md",
+    "workspace/skills/wiki-lint.skill.md",
+    "workspace/skills/skill-index.md"
+  ],
+  "filesUpdated": [
+    "workspace/context/project-context.md",
+    "workspace/context/architecture-context.md",
+    "workspace/context/domain-context.md",
+    "workspace/context/ux-context.md",
+    "workspace/context/governance-context.md",
+    "workspace/context/context-maintenance-matrix.md",
+    "workspace/AGENTS.md",
+    "AGENTS.md",
+    "AGENTS.md",
+    "workspace/skills/README.md",
+    ".wwg/config/skill-manifest.yaml"
+  ],
+  "filesSkipped": [],
+  "generatedSectionsUpdated": [
+    "workspace/context/project-context.md#COMPILED_CONTEXT",
+    "workspace/context/architecture-context.md#COMPILED_CONTEXT",
+    "workspace/context/domain-context.md#COMPILED_CONTEXT",
+    "workspace/context/ux-context.md#COMPILED_CONTEXT",
+    "workspace/context/governance-context.md#COMPILED_CONTEXT",
+    "workspace/context/context-maintenance-matrix.md#COMPILED_CONTEXT",
+    "workspace/AGENTS.md#PROJECT_CONTEXT",
+    "AGENTS.md#PROJECT_CONTEXT",
+    "AGENTS.md#MAINTENANCE_CONTRACT",
+    "workspace/skills/README.md#SKILL_INDEX"
+  ],
+  "warnings": [
+    ".wwg/config/skill-manifest.yaml: Skill Manifest records project skill state only; recommended/reference-only skills are not runtime-active.",
+    "workspace/AGENTS.md: Generated section PROJECT_CONTEXT was not found.",
+    "workspace/context/architecture-context.md: Generated section COMPILED_CONTEXT was not found.",
+    "workspace/context/context-maintenance-matrix.md: Generated section COMPILED_CONTEXT was not found.",
+    "workspace/context/domain-context.md: Generated section COMPILED_CONTEXT was not found.",
+    "workspace/context/governance-context.md: Generated section COMPILED_CONTEXT was not found.",
+    "workspace/context/project-context.md: Generated section COMPILED_CONTEXT was not found.",
+    "workspace/context/ux-context.md: Generated section COMPILED_CONTEXT was not found.",
+    "workspace/skills/README.md: Generated section SKILL_INDEX was not found."
+  ],
+  "validationPerformed": [
+    "Verified wwg.project.yaml exists and can be parsed.",
+    "Compiled generation inputs deterministically without LLM calls.",
+    "Applied generated-section safety rules.",
+    "Recorded markdown and JSON generation reports.",
+    "Generated project-local Skill Manifest from profile recommendations, registry metadata, local evidence, and governed compatibility copy policy without activating skills."
+  ],
+  "registryUpdated": true
+}

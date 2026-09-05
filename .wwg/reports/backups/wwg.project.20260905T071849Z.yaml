@@ -1,0 +1,64 @@
+wwg:
+  instance_type: generated-project
+  template_version: 0.6.6
+  adoption_mode: new
+  created_by: wwg-cli
+  created_at: 2026-09-05
+  last_updated_at: 2026-09-05
+  registry_owner: wwg
+  registry_update_policy: safe_merge
+project:
+  name: BOPLUX
+  slug: boplux
+  description: ""
+  owner: ""
+  status: initialized
+selected_profiles:
+  - game
+agents:
+  primary: generic
+  secondary: []
+governance:
+  level: standard
+truthAlignment:
+  hardStops: true
+  pauseOnOrange: true
+  stopOnRed: true
+  requireTestsForMeaningfulChanges: true
+  highRiskAreas:
+    - payments
+    - auth
+    - security
+    - persistence
+    - deployment
+    - compliance
+    - financial-settlement
+layers:
+  wiki:
+    root: .wwg/wiki
+    strategy: wwg-native
+  workspace:
+    root: .wwg/workspace
+    strategy: wwg-native
+  governance:
+    root: .wwg/governance
+    strategy: wwg-native
+canonical_artifacts:
+  root_agents: AGENTS.md
+  project_master_context: .wwg/wiki/09-agent-context/project-master-context.md
+  maintenance_matrix: .wwg/wiki/12-maintenance/context-maintenance-matrix.md
+  principles: .wwg/wiki/principles
+  design_context: .wwg/wiki/07-ux/design-principles.md
+  runtime_context: .wwg/wiki/09-agent-context/runtime-context.md
+  public_discovery_context: .wwg/wiki/09-agent-context/public-discovery-context.md
+  recommendation_registry: .wwg/governance/recommendation-registry.md
+  recommendation_policy: .wwg/governance/recommendation-policy.md
+reports:
+  init_report: .wwg/reports/wwg-init-report.md
+  init_report_json: .wwg/reports/wwg-init-report.json
+  generate_workspace: .wwg/reports/wwg-generate-workspace-report.md
+  generate_governance: .wwg/reports/wwg-generate-governance-report.md
+  refresh_context: .wwg/reports/wwg-refresh-context-report.md
+  refresh_skills: .wwg/reports/wwg-refresh-skills-report.md
+last_generated:
+  workspace: 2026-09-05T07:18:49.243Z

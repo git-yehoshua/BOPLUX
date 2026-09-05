@@ -1,0 +1,155 @@
+profile:
+  id: game
+  name: Game
+  version: 0.1.0
+  inherits: base
+  description: Profile for games, simulations, and interactive play systems.
+
+recommended_for:
+  - Web games
+  - Mobile games
+  - Prototype games
+  - Multiplayer or bot-driven games
+
+adds:
+  wiki:
+    - game-loop
+    - core-mechanics
+    - match-state
+    - balancing-model
+    - player-progression
+    - bot-behavior
+    - replay-systems
+    - economy-model
+    - anti-cheat-notes
+    - telemetry-plan
+  workspace:
+    - gameplay-task-template
+    - mechanic-tuning-context
+    - bot-behavior-context
+    - replay-system-context
+  governance:
+    - balance-review
+    - save-state-test-gate
+    - anti-cheat-review
+    - telemetry-validation
+
+required_questions:
+  - What is the core game loop?
+  - What mechanics define skill or strategy?
+  - What state must be saved or replayed?
+  - How is balance measured?
+  - What telemetry is required?
+
+quality_gates:
+  - Core loop playable
+  - Progression rules reviewed
+  - State persistence tested
+  - Telemetry events checked
+
+product_invariants:
+  - Match outcomes must remain authoritative and replayable.
+  - Anti-cheat boundaries must not be weakened.
+  - Bot/AI behavior must be deterministic where required.
+
+runtime_truth_concerns:
+  - Match state authority must be explicit.
+  - Replay/watch systems must derive from authoritative match history.
+  - Client-side predictions or effects must not replace authoritative outcomes.
+
+maintenance_triggers:
+  - Mechanics, balance, match state, bots, replay/watch behavior, ranking, economy, anti-cheat, or telemetry changes.
+
+profile_governance_gates:
+  - Core loop tested
+  - Authoritative match state reviewed
+  - Replay/watch behavior validated
+  - Anti-cheat boundaries reviewed
+  - Public-surface review completed for patch notes, gameplay updates, balance notes, or event announcements
+
+routing_keywords:
+  - match
+  - replay
+  - watch
+  - leaderboard
+  - rank
+  - bot
+  - economy
+  - mechanic
+  - skill
+  - balance
+  - progression
+  - anti-cheat
+  - telemetry
+
+likely_impact_zones:
+  - Game loop and match state
+  - Replay/watch systems
+  - Bot behavior and balance
+  - Ranking and economy
+  - Patch notes and event announcements
+
+runtime_infrastructure_concerns:
+  - Match lifecycle
+  - Queue/worker execution
+  - Replay/watch consistency
+  - Leaderboard updates
+  - Anti-cheat signals
+
+public_discovery_concerns:
+  - Homepage
+  - Patch notes
+  - Gameplay updates
+  - Leaderboard public pages
+  - Lore/docs hubs
+
+monitoring_operations_concerns:
+  - Match latency
+  - Replay readiness
+  - Queue stalls
+  - Player peaks
+  - Public content correctness
+
+evidence_approval_notes:
+  - Public balance notes, economy changes, and ranked rule changes may be approval-gated.
+
+profile_canonical_families:
+  - mechanics
+  - match lifecycle
+  - economy
+  - ranking
+  - replay/watch
+  - anti-cheat
+  - public updates
+
+profile_context_governance:
+  - Keep mechanics, balance, economy, ranking, replay/watch, and anti-cheat detail in dedicated canonical context or profile files.
+
+profile_truth_conflict_notes:
+  - Live match behavior, replay history, ranking, or balance conflicts require evidence and canonical-family resolution.
+
+profile_approval_gated_areas:
+  - ranked rules
+  - economy changes
+  - public balance notes
+  - anti-cheat changes
+  - player-facing patch approvals
+
+skill_recommendations:
+  recommended_skill_domains:
+    - game-design
+    - creative.story
+    - creative.visual-direction
+    - software.testing
+  optional_skill_domains:
+    - software.web
+    - game-monetization
+    - community
+    - marketing
+    - software.performance
+  recommended_skills:
+    - core.truth-loop
+    - core.context-skill-maintenance
+    - core.regression-guardrail-maintenance
+  notes:
+    - Creative and gameplay recommendations should be refined by the actual engine, platform, and project evidence.

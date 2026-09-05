@@ -1,0 +1,48 @@
+{
+  "sources": [
+    {
+      "id": "src_20260905_072128_core_game_design_specification_v1_1_plant_mode",
+      "type": "markdown-doc",
+      "title": "Core Game Design Specification v1.1 - Plant Mode",
+      "description": "Authoritative game design source of truth. DECIDED and RECOMMENDED items are binding; UNDECIDED items need owner input.",
+      "originalName": "Core_Game_Design_Specification_v1.1_Plant_Mode.md",
+      "storedPath": "wiki/01-sources/raw/uploads/docs/Core_Game_Design_Specification_v1.1_Plant_Mode.md",
+      "url": null,
+      "note": null,
+      "addedAt": "2026-09-05T07:21:28.670Z",
+      "addedBy": "user",
+      "status": "raw",
+      "tags": [
+        "game-design",
+        "plant-mode",
+        "specification",
+        "canonical"
+      ],
+      "relatedWikiPages": [
+        "wiki/01-sources/source-index.md"
+      ]
+    },
+    {
+      "id": "src_20260905_073942_open_question_resolutions_v1",
+      "type": "markdown-doc",
+      "title": "Open Question Resolutions v1",
+      "description": "Owner-approved resolutions for OQ-001 through OQ-009 plus the match-length/halftime gap. OQ-006 and OQ-008 are new mechanics approved now; track as independent Workspace items with their own validation.",
+      "originalName": "Open_Questions_Resolutions_v1.md",
+      "storedPath": "wiki/01-sources/raw/uploads/docs/Open_Questions_Resolutions_v1.md",
+      "url": null,
+      "note": null,
+      "addedAt": "2026-09-05T07:39:42.458Z",
+      "addedBy": "user",
+      "status": "raw",
+      "tags": [
+        "open-questions",
+        "resolutions",
+        "decided",
+        "plant-mode"
+      ],
+      "relatedWikiPages": [
+        "wiki/01-sources/source-index.md"
+      ]
+    }
+  ]
+}

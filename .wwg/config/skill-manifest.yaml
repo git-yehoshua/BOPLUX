@@ -1,0 +1,347 @@
+version: 1
+generated_by: wwg
+updated_at: 2026-09-05T07:18:49.224Z
+selected_profiles:
+  - game
+detected_domains:
+  - business.compliance
+  - creative.story
+  - game-design
+  - software.security
+skills:
+  core.change-classifier:
+    state: enabled
+    source: bundled
+    class: core
+    reason: Core WWG change classification behavior.
+    materialization: copied
+    path: .wwg/workspace/skills/change-classifier.skill.md
+    recommended_by:
+      - core
+      - compatibility
+    enabled_by: wwg
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: compatibility
+        value: change-classifier
+        strength: explicit
+        reason: Legacy copied Workspace skill file is physically present.
+    compatibility:
+      legacy_copied: true
+      copied_by_legacy_init: true
+      copied_by_legacy_refresh: true
+      migration_status: keep_copied
+      migration_reason: Historically copied into every workspace before governed Skills existed.
+      future_default_materialization: copied
+  core.context-skill-maintenance:
+    state: enabled
+    source: bundled
+    class: core
+    reason: Core WWG context and skill synchronization behavior.
+    materialization: copied
+    path: .wwg/workspace/skills/context-skill-maintenance.skill.md
+    recommended_by:
+      - core
+      - compatibility
+    enabled_by: wwg
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: compatibility
+        value: context-skill-maintenance
+        strength: explicit
+        reason: Legacy copied Workspace skill file is physically present.
+    compatibility:
+      legacy_copied: true
+      copied_by_legacy_init: true
+      copied_by_legacy_refresh: true
+      migration_status: keep_copied
+      migration_reason: Historically copied into every workspace before governed Skills existed.
+      future_default_materialization: copied
+  core.drift-detector:
+    state: enabled
+    source: bundled
+    class: core
+    reason: Core WWG drift detection behavior.
+    materialization: copied
+    path: .wwg/workspace/skills/drift-detector.skill.md
+    recommended_by:
+      - core
+      - compatibility
+    enabled_by: wwg
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: compatibility
+        value: drift-detector
+        strength: explicit
+        reason: Legacy copied Workspace skill file is physically present.
+    compatibility:
+      legacy_copied: true
+      copied_by_legacy_init: true
+      copied_by_legacy_refresh: true
+      migration_status: keep_copied
+      migration_reason: Historically copied into every workspace before governed Skills existed.
+      future_default_materialization: copied
+  core.regression-guardrail-maintenance:
+    state: enabled
+    source: bundled
+    class: core
+    reason: Core WWG regression guardrail behavior.
+    materialization: copied
+    path: .wwg/workspace/skills/regression-guardrail-maintenance.skill.md
+    recommended_by:
+      - core
+      - compatibility
+    enabled_by: wwg
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: compatibility
+        value: regression-guardrail-maintenance
+        strength: explicit
+        reason: Legacy copied Workspace skill file is physically present.
+    compatibility:
+      legacy_copied: true
+      copied_by_legacy_init: true
+      copied_by_legacy_refresh: true
+      migration_status: keep_copied
+      migration_reason: Historically copied into every workspace before governed Skills existed.
+      future_default_materialization: copied
+  core.task-router:
+    state: enabled
+    source: bundled
+    class: core
+    reason: Core WWG task routing behavior.
+    materialization: copied
+    path: .wwg/workspace/skills/task-router.skill.md
+    recommended_by:
+      - core
+      - compatibility
+    enabled_by: wwg
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: compatibility
+        value: task-router
+        strength: explicit
+        reason: Legacy copied Workspace skill file is physically present.
+    compatibility:
+      legacy_copied: true
+      copied_by_legacy_init: true
+      copied_by_legacy_refresh: true
+      migration_status: keep_copied
+      migration_reason: Historically copied into every workspace before governed Skills existed.
+      future_default_materialization: copied
+  core.truth-loop:
+    state: enabled
+    source: bundled
+    class: core
+    reason: Core WWG governance behavior.
+    materialization: reference
+    path: null
+    recommended_by:
+      - core
+    enabled_by: wwg
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: governance
+        value: core
+        strength: explicit
+        reason: Core WWG governance behavior.
+  creative.story:
+    state: recommended
+    source: profile
+    class: domain
+    reason: Recommended by selected profile and confirmed by project evidence for creative.story.
+    materialization: reference
+    path: null
+    recommended_by:
+      - profile:game
+    enabled_by: null
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: profile
+        value: game
+        strength: medium
+        reason: Selected profile recommends creative.story.
+      - &a1
+        type: domain
+        value: creative.story
+        strength: medium
+        reason: Game profile or narrative documents detected.
+  creative.storytelling:
+    state: recommended
+    source: bundled
+    class: domain
+    reason: Story, narrative, lore, campaign, or game profile evidence detected.
+    materialization: reference
+    path: null
+    recommended_by:
+      - domain:creative.story
+      - profile:creative.story
+      - profile:game
+    enabled_by: null
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: profile
+        value: game
+        strength: medium
+        reason: Selected profile matches registry applies_when for creative.storytelling.
+      - *a1
+      - type: profile
+        value: creative.story
+        strength: medium
+        reason: Selected profile recommends this skill domain.
+  creative.visual-direction:
+    state: recommended
+    source: profile
+    class: domain
+    reason: Recommended by selected profile game.
+    materialization: none
+    path: null
+    recommended_by:
+      - profile:game
+    enabled_by: null
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: profile
+        value: game
+        strength: medium
+        reason: Selected profile recommends creative.visual-direction.
+  game-design:
+    state: recommended
+    source: profile
+    class: domain
+    reason: Recommended by selected profile and confirmed by project evidence for game-design.
+    materialization: reference
+    path: null
+    recommended_by:
+      - profile:game
+    enabled_by: null
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: profile
+        value: game
+        strength: medium
+        reason: Selected profile recommends game-design.
+      - type: domain
+        value: game-design
+        strength: medium
+        reason: Game profile or mechanics/balancing documents detected.
+  public.public-surface-update:
+    state: recommended
+    source: bundled
+    class: domain
+    reason: Public or customer-facing communication evidence suggests this skill may help.
+    materialization: reference
+    path: null
+    recommended_by:
+      - file:.wwg/governance/README.md
+      - file:.wwg/governance/profiles/README.md
+      - file:.wwg/reports/README.md
+      - file:.wwg/wiki/00-inbox/README.md
+      - file:README.md
+    enabled_by: null
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: file
+        value: README.md
+        strength: strong
+        reason: README.md matches README.md.
+      - type: file
+        value: .wwg/governance/README.md
+        strength: strong
+        reason: .wwg/governance/README.md matches README.md.
+      - type: file
+        value: .wwg/reports/README.md
+        strength: strong
+        reason: .wwg/reports/README.md matches README.md.
+      - type: file
+        value: .wwg/governance/profiles/README.md
+        strength: strong
+        reason: .wwg/governance/profiles/README.md matches README.md.
+      - type: file
+        value: .wwg/wiki/00-inbox/README.md
+        strength: strong
+        reason: .wwg/wiki/00-inbox/README.md matches README.md.
+    compatibility:
+      legacy_copied: true
+      copied_by_legacy_init: true
+      copied_by_legacy_refresh: true
+      migration_status: future_reference_only
+      migration_reason: Historically copied into every workspace before governed Skills existed.
+      future_default_materialization: reference
+  software.bug-fix:
+    state: recommended
+    source: bundled
+    class: domain
+    reason: Software, testing, bug, or incident evidence suggests this skill may help.
+    materialization: reference
+    path: null
+    recommended_by:
+      - profile:software.testing
+    enabled_by: null
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: profile
+        value: software.testing
+        strength: medium
+        reason: Selected profile recommends this skill domain.
+    compatibility:
+      legacy_copied: true
+      copied_by_legacy_init: true
+      copied_by_legacy_refresh: true
+      migration_status: future_reference_only
+      migration_reason: Historically copied into every workspace before governed Skills existed.
+      future_default_materialization: reference
+  software.testing:
+    state: recommended
+    source: profile
+    class: domain
+    reason: Recommended by selected profile game.
+    materialization: none
+    path: null
+    recommended_by:
+      - profile:game
+    enabled_by: null
+    disabled_reason: null
+    last_refreshed: 2026-09-05T07:18:49.224Z
+    evidence:
+      - type: profile
+        value: game
+        strength: medium
+        reason: Selected profile recommends software.testing.
+local_skills:
+  context-refresh:
+    state: local
+    path: .wwg/workspace/skills/context-refresh.skill.md
+    promotion:
+      status: not_requested
+      reason: Existing project-local Workspace skill file.
+  task-ticket-writer:
+    state: local
+    path: .wwg/workspace/skills/task-ticket-writer.skill.md
+    promotion:
+      status: not_requested
+      reason: Existing project-local Workspace skill file.
+  wiki-ingest:
+    state: local
+    path: .wwg/workspace/skills/wiki-ingest.skill.md
+    promotion:
+      status: not_requested
+      reason: Existing project-local Workspace skill file.
+  wiki-lint:
+    state: local
+    path: .wwg/workspace/skills/wiki-lint.skill.md
+    promotion:
+      status: not_requested
+      reason: Existing project-local Workspace skill file.

@@ -1,0 +1,416 @@
+{
+  "summary": {
+    "reportType": "sources",
+    "target": ".",
+    "sourceCount": 2,
+    "validationFindings": 3
+  },
+  "sources": [
+    {
+      "id": "src_20260905_072128_core_game_design_specification_v1_1_plant_mode",
+      "type": "markdown-doc",
+      "title": "Core Game Design Specification v1.1 - Plant Mode",
+      "description": "Authoritative game design source of truth. DECIDED and RECOMMENDED items are binding; UNDECIDED items need owner input.",
+      "originalName": "Core_Game_Design_Specification_v1.1_Plant_Mode.md",
+      "storedPath": "wiki/01-sources/raw/uploads/docs/Core_Game_Design_Specification_v1.1_Plant_Mode.md",
+      "url": null,
+      "note": null,
+      "addedAt": "2026-09-05T07:21:28.670Z",
+      "addedBy": "user",
+      "status": "raw",
+      "tags": [
+        "game-design",
+        "plant-mode",
+        "specification",
+        "canonical"
+      ],
+      "relatedWikiPages": [
+        "wiki/01-sources/source-index.md"
+      ]
+    },
+    {
+      "id": "src_20260905_073942_open_question_resolutions_v1",
+      "type": "markdown-doc",
+      "title": "Open Question Resolutions v1",
+      "description": "Owner-approved resolutions for OQ-001 through OQ-009 plus the match-length/halftime gap. OQ-006 and OQ-008 are new mechanics approved now; track as independent Workspace items with their own validation.",
+      "originalName": "Open_Questions_Resolutions_v1.md",
+      "storedPath": "wiki/01-sources/raw/uploads/docs/Open_Questions_Resolutions_v1.md",
+      "url": null,
+      "note": null,
+      "addedAt": "2026-09-05T07:39:42.458Z",
+      "addedBy": "user",
+      "status": "raw",
+      "tags": [
+        "open-questions",
+        "resolutions",
+        "decided",
+        "plant-mode"
+      ],
+      "relatedWikiPages": [
+        "wiki/01-sources/source-index.md"
+      ]
+    }
+  ],
+  "filesCopied": [
+    "wiki/01-sources/raw/uploads/docs/Open_Questions_Resolutions_v1.md"
+  ],
+  "urlsRecorded": [],
+  "notesRecorded": [],
+  "sourcesBlocked": [],
+  "validationResults": [
+    {
+      "severity": "info",
+      "code": "source-index-json-valid",
+      "message": "source-index.json is valid JSON.",
+      "path": "wiki/01-sources/source-index.json"
+    },
+    {
+      "severity": "info",
+      "code": "source-index-md-current",
+      "message": "source-index.md generated table matches known sources.",
+      "path": "wiki/01-sources/source-index.md"
+    },
+    {
+      "severity": "info",
+      "code": "sources-validated",
+      "message": "Source validation passed."
+    }
+  ],
+  "relatedWikiUpdates": [
+    "wiki/01-sources/source-index.json",
+    "wiki/01-sources/source-index.md",
+    "wiki/01-sources/raw/urls.md",
+    "wiki/01-sources/raw/notes.md",
+    "wiki/07-ux/reference-screenshots.md",
+    "wiki/07-ux/design-preferences.md"
+  ],
+  "readiness": {
+    "target": "C:\\Users\\Admin\\Documents\\BOPLUX",
+    "targetDisplay": ".",
+    "context": "sources",
+    "mustHave": [
+      {
+        "id": "wwg-workspace",
+        "label": "WWG workspace present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg"
+        ]
+      },
+      {
+        "id": "project-config",
+        "label": "Project config present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/config/wwg.project.yaml"
+        ]
+      },
+      {
+        "id": "project-truth",
+        "label": "Project Truth present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/wiki/project-truth.md"
+        ]
+      },
+      {
+        "id": "terminology",
+        "label": "Terminology present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/wiki/terminology.md"
+        ]
+      },
+      {
+        "id": "principles-readme",
+        "label": "Principles README present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/wiki/principles/README.md"
+        ]
+      },
+      {
+        "id": "workspace-current-task",
+        "label": "Workspace current task present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/workspace/current-task.md"
+        ]
+      },
+      {
+        "id": "governance-drift-guard",
+        "label": "Governance drift guard present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/governance/drift-guard.md"
+        ]
+      },
+      {
+        "id": "recommendation-registry",
+        "label": "Recommendation Registry present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/governance/recommendation-registry.md"
+        ]
+      },
+      {
+        "id": "reports-directory",
+        "label": "Reports directory present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/reports"
+        ]
+      },
+      {
+        "id": "root-agents",
+        "label": "Root AGENTS.md present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          "AGENTS.md"
+        ]
+      },
+      {
+        "id": "test-enforcement",
+        "label": "Test enforcement governance present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/governance/test-enforcement.md"
+        ]
+      },
+      {
+        "id": "regression-guardrail",
+        "label": "Regression guardrail governance present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/governance/regression-guardrail-catalog.md"
+        ]
+      },
+      {
+        "id": "validation-readiness",
+        "label": "Validation report present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/reports/wwg-validate-report.md"
+        ]
+      },
+      {
+        "id": "audit-readiness",
+        "label": "Audit can run",
+        "category": "must-have",
+        "status": "available",
+        "severity": "info",
+        "show": true,
+        "reason": "Run audit when structural or governance confidence matters.",
+        "evidence": [
+          ".wwg/reports/wwg-audit-report.md"
+        ],
+        "cliAction": "wwg audit"
+      },
+      {
+        "id": "agent-handoff",
+        "label": "Agent handoff present",
+        "category": "must-have",
+        "status": "present",
+        "severity": "success",
+        "show": true,
+        "evidence": [
+          ".wwg/reports/wwg-agent-handoff.md",
+          ".wwg/reports/wwg-handoff-to-codex.md"
+        ]
+      },
+      {
+        "id": "adoption-regression-baseline",
+        "label": "Adoption regression baseline",
+        "category": "must-have",
+        "status": "not_applicable",
+        "severity": "info",
+        "show": true,
+        "reason": "Only required for adopted existing projects.",
+        "evidence": []
+      }
+    ],
+    "otherFeatures": [
+      {
+        "id": "readme-support",
+        "label": "README missing",
+        "category": "other-feature",
+        "status": "present",
+        "severity": "success",
+        "show": false,
+        "reason": "The project front door is not present.",
+        "evidence": [
+          "README.md"
+        ],
+        "cliAction": "wwg readme generate --dry-run",
+        "agentAction": "Prepare a README handoff or reviewed scaffold; do not invent final README prose."
+      },
+      {
+        "id": "changelog-support",
+        "label": "Changelog missing",
+        "category": "other-feature",
+        "status": "present",
+        "severity": "success",
+        "show": false,
+        "reason": "Package, product, or git history signals make release memory relevant.",
+        "evidence": [
+          "CHANGELOG.md"
+        ],
+        "cliAction": "wwg changelog generate --from-git --weekly --dry-run",
+        "agentAction": "Prepare or review release narrative before treating changelog wording as final."
+      },
+      {
+        "id": "source-index-support",
+        "label": "Source index missing",
+        "category": "other-feature",
+        "status": "present",
+        "severity": "success",
+        "show": false,
+        "reason": "Source references exist, but no generated source index was detected.",
+        "evidence": [
+          ".wwg/wiki/01-sources/source-index.md",
+          ".wwg/wiki/01-sources/source-index.json",
+          "wiki/01-sources/source-index.md",
+          "wiki/01-sources/source-index.json"
+        ],
+        "cliAction": "wwg sources index",
+        "agentAction": "Review the source registry/index before relying on external truth."
+      },
+      {
+        "id": "infra-readiness",
+        "label": "Infrastructure readiness not checked",
+        "category": "other-feature",
+        "status": "available",
+        "severity": "warning",
+        "show": false,
+        "reason": "Build, deploy, env, or infrastructure indicators were detected.",
+        "evidence": [],
+        "cliAction": "wwg infra check",
+        "agentAction": "Inspect infrastructure readiness before deployment-related work."
+      },
+      {
+        "id": "github-publish-readiness",
+        "label": "GitHub publishing readiness not checked",
+        "category": "other-feature",
+        "status": "available",
+        "severity": "info",
+        "show": false,
+        "reason": "Git or GitHub context exists.",
+        "evidence": [
+          ".git",
+          ".github",
+          "package.json repository"
+        ],
+        "cliAction": "wwg publish github --dry-run",
+        "agentAction": "Do not publish without explicit approval; review readiness and secret safety first."
+      },
+      {
+        "id": "doctor-self-heal",
+        "label": "Doctor/self-heal available for repairable issues",
+        "category": "other-feature",
+        "status": "not_applicable",
+        "severity": "info",
+        "show": false,
+        "reason": "Repairable WWG-owned issues were detected by the current command.",
+        "evidence": [],
+        "cliAction": "wwg doctor --apply",
+        "agentAction": "Use doctor for deterministic WWG-owned repair; keep semantic truth review-only."
+      },
+      {
+        "id": "upgrade-migration",
+        "label": "Current version, optional candidate review",
+        "category": "other-feature",
+        "status": "not_applicable",
+        "severity": "info",
+        "show": false,
+        "reason": "Workspace is current. Optional semantic/candidate review artifacts exist; run only if adopting candidate surfaces.",
+        "evidence": [],
+        "cliAction": "wwg audit --upgrade-candidates",
+        "agentAction": "Treat candidate/review artifacts as optional review surfaces unless the user asks to promote them."
+      },
+      {
+        "id": "wizard-onboarding",
+        "label": "Wizard onboarding available",
+        "category": "other-feature",
+        "status": "not_applicable",
+        "severity": "info",
+        "show": false,
+        "reason": "Wizard is shown only for onboarding, init, or adoption contexts.",
+        "evidence": [],
+        "cliAction": "wwg wizard",
+        "agentAction": "Use the Wizard only when the user wants guided setup."
+      }
+    ],
+    "recommendedNext": [
+      {
+        "id": "continue-from-handoff",
+        "label": "Continue from WWG truth and current task",
+        "category": "recommended-next",
+        "status": "available",
+        "severity": "success",
+        "show": true,
+        "reason": "No relevant optional readiness gaps were detected.",
+        "cliAction": "wwg brief",
+        "agentAction": "Proceed within the user's requested scope and keep the truth loop synchronized."
+      }
+    ],
+    "developerDetail": [
+      {
+        "id": "developer-validate",
+        "label": "Run structural validation",
+        "category": "developer-detail",
+        "status": "available",
+        "severity": "info",
+        "show": true,
+        "cliAction": "wwg validate"
+      },
+      {
+        "id": "developer-audit",
+        "label": "Run lower-level audit",
+        "category": "developer-detail",
+        "status": "available",
+        "severity": "info",
+        "show": false,
+        "cliAction": "wwg audit"
+      }
+    ]
+  }
+}

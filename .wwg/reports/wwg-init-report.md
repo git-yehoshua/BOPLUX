@@ -1,0 +1,293 @@
+# WWG Init Report
+
+## Summary
+
+Initialized WWG-native project foundation for BOPLUX.
+
+## Command
+
+`wwg start . --profile game --agent generic --governance standard --force`
+
+## Target
+
+.
+
+## Project
+
+BOPLUX
+
+## Selected Profiles
+
+- game
+
+## Agent Configuration
+
+- Primary: generic
+- Secondary: None
+
+## Governance Level
+
+standard
+
+## Files Created
+
+- .wwg/reports/README.md
+- .wwg/wiki/AGENTS.md
+- .wwg/wiki/index.md
+- .wwg/wiki/log.md
+- .wwg/wiki/project-truth-summary.md
+- .wwg/wiki/project-truth.md
+- .wwg/wiki/RESOLVER.md
+- .wwg/wiki/terminology-summary.md
+- .wwg/wiki/terminology.md
+- .wwg/wiki/00-inbox/README.md
+- .wwg/wiki/03-requirements/acceptance-criteria.md
+- .wwg/wiki/03-requirements/constraints.md
+- .wwg/wiki/03-requirements/functional-requirements.md
+- .wwg/wiki/03-requirements/non-functional-requirements.md
+- .wwg/wiki/03-requirements/README.md
+- .wwg/wiki/03-requirements/user-stories.md
+- .wwg/wiki/01-sources/README.md
+- .wwg/wiki/01-sources/source-index.json
+- .wwg/wiki/01-sources/source-index.md
+- .wwg/wiki/04-decisions/adr-index.md
+- .wwg/wiki/04-decisions/README.md
+- .wwg/wiki/06-domain/edge-cases.md
+- .wwg/wiki/06-domain/entities.md
+- .wwg/wiki/06-domain/README.md
+- .wwg/wiki/06-domain/rules.md
+- .wwg/wiki/06-domain/workflows.md
+- .wwg/wiki/07-ux/content-guidelines.md
+- .wwg/wiki/07-ux/design-preferences.md
+- .wwg/wiki/07-ux/design-principles.md
+- .wwg/wiki/07-ux/README.md
+- .wwg/wiki/07-ux/reference-screenshots.md
+- .wwg/wiki/07-ux/screens.md
+- .wwg/wiki/07-ux/user-journeys.md
+- .wwg/wiki/02-project/agent-team-governance.md
+- .wwg/wiki/02-project/business-model.md
+- .wwg/wiki/02-project/glossary.md
+- .wwg/wiki/02-project/product-vision.md
+- .wwg/wiki/02-project/project-brief.md
+- .wwg/wiki/02-project/README.md
+- .wwg/wiki/02-project/success-metrics.md
+- .wwg/wiki/02-project/target-users.md
+- .wwg/wiki/05-architecture/api-map.md
+- .wwg/wiki/05-architecture/data-model.md
+- .wwg/wiki/05-architecture/deployment-model.md
+- .wwg/wiki/05-architecture/integration-map.md
+- .wwg/wiki/05-architecture/README.md
+- .wwg/wiki/05-architecture/security-model.md
+- .wwg/wiki/05-architecture/system-overview.md
+- .wwg/wiki/08-operations/incident-log.md
+- .wwg/wiki/08-operations/known-issues.md
+- .wwg/wiki/08-operations/monitoring.md
+- .wwg/wiki/08-operations/operations-report-template.md
+- .wwg/wiki/08-operations/public-discovery.md
+- .wwg/wiki/08-operations/public-surface-updates.md
+- .wwg/wiki/08-operations/qa-checklists.md
+- .wwg/wiki/08-operations/README.md
+- .wwg/wiki/08-operations/runbooks.md
+- .wwg/wiki/08-operations/signoff-learnings.md
+- .wwg/wiki/10-skills/README.md
+- .wwg/wiki/10-skills/skill-index.md
+- .wwg/wiki/09-agent-context/canonical-context-policy.md
+- .wwg/wiki/09-agent-context/claude-context.md
+- .wwg/wiki/09-agent-context/codex-context.md
+- .wwg/wiki/09-agent-context/cursor-context.md
+- .wwg/wiki/09-agent-context/project-master-context.md
+- .wwg/wiki/09-agent-context/public-discovery-context.md
+- .wwg/wiki/09-agent-context/README.md
+- .wwg/wiki/09-agent-context/reusable-prompts.md
+- .wwg/wiki/09-agent-context/runtime-context.md
+- .wwg/wiki/principles/changelog-product-memory-principle.md
+- .wwg/wiki/principles/readme-front-door-principle.md
+- .wwg/wiki/principles/README.md
+- .wwg/wiki/12-maintenance/change-classification.md
+- .wwg/wiki/12-maintenance/context-maintenance-matrix.md
+- .wwg/wiki/12-maintenance/drift-policy.md
+- .wwg/wiki/12-maintenance/maintenance-contract.md
+- .wwg/wiki/12-maintenance/README.md
+- .wwg/wiki/01-sources/processed/.gitkeep
+- .wwg/wiki/01-sources/raw/.gitkeep
+- .wwg/wiki/01-sources/raw/notes.md
+- .wwg/wiki/01-sources/raw/urls.md
+- .wwg/wiki/04-decisions/adr/0001-use-wwg-structure.md
+- .wwg/wiki/11-synthesis/contradictions.md
+- .wwg/wiki/11-synthesis/current-state.md
+- .wwg/wiki/11-synthesis/open-questions.md
+- .wwg/wiki/11-synthesis/README.md
+- .wwg/wiki/11-synthesis/roadmap.md
+- .wwg/wiki/10-skills/skill-specs/context-refresh.skill.md
+- .wwg/wiki/10-skills/skill-specs/task-ticket-writer.skill.md
+- .wwg/wiki/10-skills/skill-specs/wiki-ingest.skill.md
+- .wwg/wiki/10-skills/skill-specs/wiki-lint.skill.md
+- .wwg/wiki/01-sources/raw/uploads/.gitkeep
+- .wwg/wiki/01-sources/raw/uploads/brand-assets/.gitkeep
+- .wwg/wiki/01-sources/raw/uploads/logos/.gitkeep
+- .wwg/wiki/01-sources/raw/uploads/docs/.gitkeep
+- .wwg/wiki/01-sources/raw/uploads/screenshots/.gitkeep
+- .wwg/workspace/AGENTS.md
+- .wwg/workspace/context.md
+- .wwg/workspace/current-task.md
+- .wwg/workspace/generation-policy.md
+- .wwg/workspace/implementation-report-format.md
+- .wwg/workspace/prompt-format.md
+- .wwg/workspace/skill-format.md
+- .wwg/workspace/task-format.md
+- .wwg/workspace/agents/claude-code.md
+- .wwg/workspace/agents/codex.md
+- .wwg/workspace/agents/cursor.md
+- .wwg/workspace/agents/vscode.md
+- .wwg/workspace/context/architecture-context.md
+- .wwg/workspace/context/context-maintenance-matrix.md
+- .wwg/workspace/context/domain-context.md
+- .wwg/workspace/context/governance-context.md
+- .wwg/workspace/context/project-context.md
+- .wwg/workspace/context/ux-context.md
+- .wwg/workspace/skills/change-classifier.skill.md
+- .wwg/workspace/skills/context-skill-maintenance.skill.md
+- .wwg/workspace/skills/drift-detector.skill.md
+- .wwg/workspace/skills/README.md
+- .wwg/workspace/skills/regression-guardrail-maintenance.skill.md
+- .wwg/workspace/skills/skill-spec-template.md
+- .wwg/workspace/skills/task-router.skill.md
+- .wwg/workspace/prompts/bug-fix.md
+- .wwg/workspace/prompts/classified-change-request.md
+- .wwg/workspace/prompts/codex-full-access.md
+- .wwg/workspace/prompts/context-skill-maintenance.md
+- .wwg/workspace/prompts/documentation-update.md
+- .wwg/workspace/prompts/feature-implementation.md
+- .wwg/workspace/prompts/production-monitoring.md
+- .wwg/workspace/prompts/public-discovery-maintenance.md
+- .wwg/workspace/prompts/public-surface-update.md
+- .wwg/workspace/prompts/refactor.md
+- .wwg/workspace/prompts/runtime-infrastructure.md
+- .wwg/workspace/prompts/task-router.md
+- .wwg/workspace/prompts/test-generation.md
+- .wwg/workspace/tasks/bug-fix-task-template.md
+- .wwg/workspace/tasks/implementation-task-template.md
+- .wwg/workspace/tasks/research-task-template.md
+- .wwg/workspace/tasks/task-ticket-template.md
+- .wwg/governance/audit-log.md
+- .wwg/governance/canonical-artifact-review.md
+- .wwg/governance/context-drift-detection.md
+- .wwg/governance/drift-detection.md
+- .wwg/governance/drift-guard.md
+- .wwg/governance/enforcement-levels.md
+- .wwg/governance/evidence-standards.md
+- .wwg/governance/human-approval-matrix.md
+- .wwg/governance/maintenance-review-checklist.md
+- .wwg/governance/operational-readiness-review.md
+- .wwg/governance/project-readiness-checklist.md
+- .wwg/governance/public-discovery-review.md
+- .wwg/governance/public-surface-review.md
+- .wwg/governance/quality-gates.md
+- .wwg/governance/README.md
+- .wwg/governance/recommendation-policy.md
+- .wwg/governance/recommendation-registry.md
+- .wwg/governance/regression-guardrail-catalog.md
+- .wwg/governance/release-checklist.md
+- .wwg/governance/security-review.md
+- .wwg/governance/test-enforcement.md
+- .wwg/governance/test-plan.md
+- .wwg/governance/truth-alignment-status.md
+- .wwg/governance/truth-capture.md
+- .wwg/governance/truth-conflict-resolution.md
+- .wwg/governance/truth-sync-reconciliation.md
+- .wwg/governance/validation-plan.md
+- AGENTS.md
+- README.md
+- .wwg/config/wwg.project.yaml
+- .wwg/wiki/profiles/game/governance-additions.md
+- .wwg/wiki/profiles/game/profile.yaml
+- .wwg/wiki/profiles/game/README.md
+- .wwg/wiki/profiles/game/wiki-additions.md
+- .wwg/wiki/profiles/game/workspace-additions.md
+- .wwg/workspace/profiles/game/workspace-profile.md
+- .wwg/governance/profiles/game/governance-profile.md
+- .wwg/wiki/principles/accessibility-principles.md
+- .wwg/wiki/principles/ai-agent-interface-principles.md
+- .wwg/wiki/principles/ui-ux-simplicity-principles.md
+- .wwg/wiki/design-system/accessibility-baseline.md
+- .wwg/wiki/design-system/agent-interface-guidelines.md
+- .wwg/wiki/design-system/ui-ux-guiding-principles.md
+- .wwg/workspace/context/ui-ux-simplicity-context.md
+- .wwg/workspace/checklists/accessibility-review-checklist.md
+- .wwg/workspace/checklists/agent-interface-review-checklist.md
+- .wwg/workspace/checklists/ui-ux-review-checklist.md
+- .wwg/wiki/profiles/README.md
+- .wwg/workspace/profiles/README.md
+- .wwg/governance/profiles/README.md
+- .wwg/readme/config.yml
+- .wwg/readme/state.json
+- .wwg/config/skill-manifest.yaml
+
+## Files Skipped
+
+- None.
+
+## Conflicts
+
+- .wwg - Pre-existing target entry; file-level conflicts will be skipped.
+- ReplicatedStorage - Pre-existing target entry; file-level conflicts will be skipped.
+- ServerScriptService - Pre-existing target entry; file-level conflicts will be skipped.
+- ServerStorage - Pre-existing target entry; file-level conflicts will be skipped.
+- StarterCharacterScripts - Pre-existing target entry; file-level conflicts will be skipped.
+- StarterPlayerScripts - Pre-existing target entry; file-level conflicts will be skipped.
+
+## Registry Created
+
+true
+
+## Profile Overlays Applied
+
+- game
+
+## Governed Skill Copy Plan
+
+Governed skill copy plan:
+- Will copy 5 core/compatibility-core skills for new projects.
+- Will reference 6 compatibility-domain skills instead of copying them for new projects.
+- Existing projects will preserve copied compatibility-domain files.
+- Cleanup runs only when `wwg maintain --apply-skill-cleanup` is explicitly requested.
+- Recommended/reference-only skills are not runtime-active skills.
+
+## Validation Performed
+
+- Validated supported profile names.
+- Validated supported primary agent.
+- Validated supported governance level.
+- Checked target initialization safety.
+- Applied governed skill copy policy for new-project compatibility skills.
+
+## Principle Review
+
+- Principles reviewed:
+  - Default `.wwg/wiki/principles/README.md` scaffold.
+- Principles updated:
+  - None.
+- Candidate principle changes:
+  - None.
+- Principle drift concerns:
+  - None.
+
+## WWG Truth Synchronization
+
+- Task mode: init
+- New truth detected: YES / NO
+- Wiki updated: YES / NO / N/A
+- Workspace updated: YES
+- Governance review completed: YES
+- Drift status: NONE
+- Canonical files changed:
+  - Initial `.wwg/wiki/project-truth.md` and `.wwg/wiki/terminology.md` were created from template defaults when not skipped.
+- Implementation discoveries synced:
+  - None; init does not scaffold application source code.
+- Remaining stale context:
+  - Replace initial `TBD` values before or during the first meaningful implementation.
+
+## Next Steps
+
+- Fill in project truth in `.wwg/wiki/` before application scaffolding.
+- Run `wwg validate --target <path>` and `wwg lint --target <path>` after changes.

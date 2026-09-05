@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-09-05T07:24:02.247Z",
+  "target": ".",
+  "summary": {
+    "truthCandidates": 0,
+    "recommendationCandidates": 1,
+    "currentTaskCandidates": 1,
+    "warnings": 0,
+    "autoPromoted": 0
+  },
+  "candidates": [
+    {
+      "id": "REC-CANDIDATE-001",
+      "type": "recommendation_candidate",
+      "status": "proposed",
+      "title": "`.wwg/governance/recommendation-registry.md` for future work candidates",
+      "summary": "A future, deferred, follow-up, limitation, or recommended-next-step signal was found outside the accepted recommendation registry.",
+      "evidence": [
+        {
+          "path": "README.md",
+          "quoteOrSummary": "`.wwg/governance/recommendation-registry.md` for future work candidates",
+          "evidenceHash": "9dd43183aa0c5844"
+        }
+      ],
+      "suggestedRegistryAction": "create_proposed_recommendation",
+      "risk": "low",
+      "confidence": "high",
+      "requiresApproval": false,
+      "reason": "Recommendations are candidate work only and are not canonical truth unless later reviewed and promoted.",
+      "decision": {
+        "status": "none",
+        "decidedAt": null,
+        "decidedBy": null,
+        "reason": null
+      },
+      "application": {
+        "status": "not_applied",
+        "previewPath": null,
+        "appliedAt": null,
+        "appliedTargets": []
+      }
+    },
+    {
+      "id": "TASK-CANDIDATE-001",
+      "type": "current_task_candidate",
+      "status": "proposed",
+      "title": "Refresh stale current task",
+      "summary": "Current task appears older than recent accepted/completed work and may need a workspace update.",
+      "evidence": [
+        {
+          "path": ".wwg/workspace/current-task.md",
+          "quoteOrSummary": "Current Task",
+          "evidenceHash": "9beb8613d45efbab"
+        },
+        {
+          "path": ".wwg/governance/README.md",
+          "quoteOrSummary": "Truth Alignment Status explains whether change is accepted requirement evolution, undocumented requirement change, documentation lag, implementation drift, regression/quality drift, or terminology drift",
+          "evidenceHash": "23eb69ba374c57cc"
+        }
+      ],
+      "suggestedTargets": [
+        ".wwg/workspace/current-task.md"
+      ],
+      "risk": "low",
+      "confidence": "medium",
+      "requiresApproval": false,
+      "safeForFutureAutoApply": true,
+      "reason": "Current task updates can be low-risk candidates, but this phase only proposes them.",
+      "decision": {
+        "status": "none",
+        "decidedAt": null,
+        "decidedBy": null,
+        "reason": null
+      },
+      "application": {
+        "status": "not_applied",
+        "previewPath": null,
+        "appliedAt": null,
+        "appliedTargets": []
+      }
+    }
+  ],
+  "warnings": [],
+  "markdownReportPath": ".wwg/reports/truth-reconciliation-candidates.md",
+  "jsonReportPath": ".wwg/reports/truth-reconciliation-candidates.json"
+}
