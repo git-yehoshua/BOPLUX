@@ -2,7 +2,8 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-if PlayerGui:FindFirstChild("BOPLUX_HUD") then return end
+local existingGui = PlayerGui:FindFirstChild("BOPLUX_HUD")
+if existingGui then existingGui:Destroy() end
 
 local font = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
 local fontHeavy = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy)
