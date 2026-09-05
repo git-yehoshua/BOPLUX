@@ -2,6 +2,11 @@
 
 All notable changes to BOPLUX are recorded here in non-technical, outcome-based language.
 
+### Added
+
+- **HUD Pass Phase 1**: Server communication remotes wired — `MatchStateSync` (phase/round/timer/score/team) and `PlayerStateSync` (stamina/sprint/jailed/buffs) fire per-client on change; `CampingMeterFill` attribute on Cell Interior parts for client polling.
+- **HUD Pass Phase 2**: Full `BOPLUX_HUD` ScreenGui built in `StarterGui` — TopBar (team badge, score, phase, round, timer, stamina bar, buff indicators), BottomNotify (warning/reveal banners), LeftSide (JAILS panel), RightSide (OBJECTIVES panel). `HUDController.local.luau` listens to remotes and polls server attributes via Heartbeat.
+
 ## [0.1.10] - 2026-09-06
 
 ### Added

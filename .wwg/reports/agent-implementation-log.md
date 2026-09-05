@@ -145,3 +145,26 @@ ot roundTimerSuperseded.
 - **Truth/docs**: ticket retro + evidence recorded; project-truth/summary updated; CHANGELOG 0.1.10; current-task.md updated.
 - **Retrospective**: keep pure-module + `now` parameter pattern; keep `fillStart = graceStart + GracePeriod` anchoring; add `JailState.exteriorFor(cellId)` accessor to avoid `_cells` coupling; nothing to remove; carryover — HUD pass (REC-0007), 2-player session (REC-0004/0005), audio assets (REC-0006).
 - **Next**: release-prep items — HUD pass (REC-0007), 2-player session (multi-occupant self-rescue + full sabotage end-to-end), audio assets/tuning (REC-0006).
+
+## 2026-09-06 — HUD Pass Phase 1 (Server Communication)
+
+- **Status**: Implemented, live verified, close-out GREEN.
+- **Code** (repo → Studio):
+  - `ReplicatedStorage/MatchSystems/MatchStateSync` (RemoteEvent) — fires per-client on phase change with `{phase, round, timeRemaining, score: {Attackers, Defenders}, playerTeam}`
+  - `ReplicatedStorage/MatchSystems/PlayerStateSync` (RemoteEvent) — fires per-client on state change with `{stamina, isSprinting, isJailed, hasSpeedBuff, hasCaptureImmunity}`
+  - `MatchManager.server.lua` — added `fireMatchSync()` to broadcast MatchStateSync on phase changes
+  - `RunPlayerState.server.lua` — added `firePlayerSync()` with diffing to broadcast PlayerStateSync on state changes
+  - `RunJailCampingMeter.server.lua` — added `setMeterAttribute()` to write `CampingMeterFill` (0.0–1.0) to Cell Interior parts
+- **Verification**: Studio play session — HUD controller receives remotes, top bar displays LIVE, Round 1, 3:00, ATTACKERS, 0-0, stamina bar green. No console errors.
+- **Next**: Phase 2 — UI Framework
+
+## 2026-09-06 — HUD Pass Phase 2 (UI Framework)
+
+- **Status**: Implemented, committed c805a3e, live verified, close-out GREEN.
+- **Code** (repo → Studio):
+  - `StarterGui/BOPLUX_HUDSetup.local.luau` — builds the full `BOPLUX_HUD` ScreenGui programmatically: TopBar (TeamBadge, Score, Phase, Round, Timer, StaminaLabel, StaminaBar+Fill, SpeedBuff, Immunity), BottomNotify (WarningBanner, RevealBanner), LeftSide (JailPanel with Title, CellA, CellB, CampingA, CampingB), RightSide (ObjectivePanel with Title, SiteA, SiteB)
+  - `StarterPlayerScripts/HUDController.local.luau` — updated to match flat TopBar structure (removed LeftPanel/CenterPanel/RightPanel references). Listens to MatchStateSync/PlayerStateSync remotes, polls Workspace attributes for jail/objective status via Heartbeat.
+- **Key fix**: HUDController originally expected `TopBar.LeftPanel/CenterPanel/RightPanel` but the ScreenGui uses flat TopBar children. Fixed to use direct `TopBar.TeamBadge`, `TopBar.Score`, etc.
+- **Verification**: 65/65 unit tests pass. Live play — HUD displays all panels: ATTACKERS/0-0, LIVE/Round 1/3:00, STAMINA bar, JAILS (Cell A/B Empty), OBJECTIVES (Site A/B Clear), WarningBanner/RevealBanner containers present. No "[BOPLUX_HUD] Missing HUD panels" error.
+- **Retrospective**: Keep the flat TopBar structure; the nested panel abstraction caused the missing-panels error. Keep the `waitForChild` polling pattern. Nothing to remove.
+- **Next**: Phase 3 — wire side panels to server attributes, wire ImpostorClient to HUD banners.

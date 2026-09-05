@@ -4,32 +4,30 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "ImpostorClientGui"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = playerGui
+local hud = playerGui:WaitForChild("BOPLUX_HUD", 15)
+local bottomNotify = hud and hud:FindFirstChild("BottomNotify")
+local warningBanner = bottomNotify and bottomNotify:FindFirstChild("WarningBanner")
+local warningText = warningBanner and warningBanner:FindFirstChild("Text")
+local revealBanner = bottomNotify and bottomNotify:FindFirstChild("RevealBanner")
+local revealText = revealBanner and revealBanner:FindFirstChild("Text")
 
-local label = Instance.new("TextLabel")
-label.Name = "StatusLabel"
-label.Size = UDim2.new(0, 520, 0, 36)
-label.Position = UDim2.new(0.5, -260, 0, 24)
-label.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-label.BackgroundTransparency = 1
-label.TextColor3 = Color3.fromRGB(255, 255, 255)
-label.TextSize = 20
-label.Font = Enum.Font.SourceSansBold
-label.Text = ""
-label.Parent = screenGui
+local function showWarning(text, duration)
+	if not warningText or not warningBanner then return end
+	warningText.Text = text
+	warningBanner.Visible = true
+	if revealBanner then revealBanner.Visible = false end
+	task.delay(duration or 6, function()
+		if warningText and warningText.Text == text then warningBanner.Visible = false end
+	end)
+end
 
-local function say(text)
-	label.BackgroundTransparency = 0.35
-	label.Text = text
-	print(text)
-	task.delay(6, function()
-		if label.Text == text then
-			label.Text = ""
-			label.BackgroundTransparency = 1
-		end
+local function showReveal(text, duration)
+	if not revealText or not revealBanner then return end
+	revealText.Text = text
+	revealBanner.Visible = true
+	if warningBanner then warningBanner.Visible = false end
+	task.delay(duration or 5, function()
+		if revealText and revealText.Text == text then revealBanner.Visible = false end
 	end)
 end
 
@@ -39,7 +37,7 @@ if matchSystems then
 	if warning then
 		warning.OnClientEvent:Connect(function(payload)
 			if payload and payload.text then
-				say("[Warning] " .. payload.text)
+				showWarning("[Warning] " .. payload.text)
 			end
 		end)
 	end
@@ -48,7 +46,7 @@ if matchSystems then
 	if role then
 		role.OnClientEvent:Connect(function(payload)
 			if payload and payload.objective then
-				say("[Secret Objective] " .. tostring(payload.objective.text))
+				showWarning("[Secret Objective] " .. tostring(payload.objective.text), 8)
 			end
 		end)
 	end
@@ -56,14 +54,12 @@ if matchSystems then
 	local reveal = matchSystems:WaitForChild("ImpostorReveal", 10)
 	if reveal then
 		reveal.OnClientEvent:Connect(function(payload)
-			if not payload then
-				return
-			end
+			if not payload then return end
 			if not payload.userId then
-				say("[Round Over] No Impostor was active this round.")
+				showReveal("[Round Over] No Impostor was active this round.", 5)
 			else
 				local outcome = payload.impostorWon and " - the Impostor won!" or " - the Impostor lost."
-				say("[Round Over] " .. tostring(payload.displayName) .. " was the Impostor" .. outcome)
+				showReveal("[Round Over] " .. tostring(payload.displayName) .. " was the Impostor" .. outcome, 5)
 			end
 		end)
 	end
