@@ -421,4 +421,51 @@ siteB.TextXAlignment = Enum.TextXAlignment.Left
 siteB.TextYAlignment = Enum.TextYAlignment.Center
 siteB.Parent = objPanel
 
-print("[BOPLUX_HUD] ScreenGui built")
+local TweenService = game:GetService("TweenService")
+
+local topBarCorner = Instance.new("UICorner")
+topBarCorner.CornerRadius = UDim.new(0, 6)
+topBarCorner.Parent = topBar
+
+-- Top bar slide-down + fade-in
+topBar.BackgroundTransparency = 0.25
+local topBarFade = TweenService:Create(topBar, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 0.25})
+topBarFade:Play()
+
+for _, child in ipairs({teamBadge, scoreLabel, phaseLabel, roundLabel, timerLabel, staminaLabel, staminaBar, speedBuff, immunityLabel}) do
+	child.BackgroundTransparency = 1
+	child.TextTransparency = 1
+	local fade = TweenService:Create(child, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0.1, true), {TextTransparency = 0})
+	fade:Play()
+end
+
+-- Side panels slide-in
+leftSide.Position = UDim2.new(-0.2, 8, 0.5, -35)
+rightSide.Position = UDim2.new(1.2, -168, 0.5, -25)
+task.wait(0.3)
+local slideLeft = TweenService:Create(leftSide, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0, 8, 0.5, -35)})
+slideLeft:Play()
+local slideRight = TweenService:Create(rightSide, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(1, -168, 0.5, -25)})
+slideRight:Play()
+
+-- BottomNotify fade-in
+bottomNotify.BackgroundTransparency = 1
+local bnFade = TweenService:Create(bottomNotify, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1})
+bnFade:Play()
+
+-- Pulse animation for warning/reveal banners when visible
+local function pulseBanner(banner, textLabel, text, duration)
+	if not banner or not textLabel then return end
+	textLabel.Text = text
+	banner.Visible = true
+	local glow = TweenService:Create(banner, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {BackgroundTransparency = 0.1})
+	glow:Play()
+	task.delay(duration or 6, function()
+		glow:Pause()
+		banner.BackgroundTransparency = 0.15
+		banner.Visible = false
+		if textLabel.Text == text then textLabel.Text = "" end
+	end)
+end
+
+print("[BOPLUX_HUD] ScreenGui built with animations")
