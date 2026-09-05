@@ -4,8 +4,12 @@ All notable changes to BOPLUX are recorded here in non-technical, outcome-based 
 
 ### Added
 
-- **HUD Pass Phase 1**: Server communication remotes wired — `MatchStateSync` (phase/round/timer/score/team) and `PlayerStateSync` (stamina/sprint/jailed/buffs) fire per-client on change; `CampingMeterFill` attribute on Cell Interior parts for client polling.
-- **HUD Pass Phase 2**: Full `BOPLUX_HUD` ScreenGui built in `StarterGui` — TopBar (team badge, score, phase, round, timer, stamina bar, buff indicators), BottomNotify (warning/reveal banners), LeftSide (JAILS panel), RightSide (OBJECTIVES panel). `HUDController.local.luau` listens to remotes and polls server attributes via Heartbeat.
+- **HUD Pass Phase 3**: ImpostorClient wired to unified HUD banners — removed `ImpostorClientGui` ScreenGui, now updates `BOPLUX_HUD` WarningBanner/RevealBanner directly via MatchSystems remotes. Task ticket and docs updated.
+- **HUD Pass Phase 4**: Animations and styling polish — `TweenService` fade-in (top bar elements, 0.6s staggered), slide-in (side panels, Back easing), pulse animation for warning/reveal banners, `UICorner` polish on TopBar. Builder script rebuilt on every play session to ensure animations apply.
+
+### Fixed
+
+- **HUD builder sync**: `BOPLUX_HUDSetup.local.luau` now destroys existing HUD clone before rebuilding, ensuring animations always apply on every play session. Builder script synced to datamodel's StarterGui.
 
 ## [0.1.10] - 2026-09-06
 
