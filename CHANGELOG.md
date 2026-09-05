@@ -2,6 +2,12 @@
 
 All notable changes to BOPLUX are recorded here in non-technical, outcome-based language.
 
+## [0.1.10] - 2026-09-06
+
+### Added
+
+- **Jail-camping meter (OQ-008)**: Anti-snowball mechanic that prevents Defenders from camping outside a Jail to守株待兔. When a Defender stands within 6 meters of a Jail exterior while occupants are inside, a server-tracked meter begins filling after a 10-second grace period. After 20 seconds of continuous camping, the meter is full and all occupants of that Jail may self-rescue — receiving a 3-second speed buff and capture immunity, identical to a successful teammate rescue. The meter depletes immediately when the Defender leaves the radius, and grace restarts on re-entry. Server-authoritative: all proximity checks, timing, and self-rescue execution happen server-side with no client trust.
+
 ## [0.1.9] - 2026-09-05
 
 ### Fixed

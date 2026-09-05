@@ -129,3 +129,19 @@ ot roundTimerSuperseded.
 - **Verification**: repo file size matches datamodel source size (1985 chars).
 - **Truth/docs**: updated in current-task.md; CHANGELOG 0.1.9 includes this fix alongside the CuePlayer Sound.Position fix.
 - **Retrospective**: keep the BackgroundTransparency toggle pattern (clean, standard Roblox approach); nothing to remove; carryover — the ScreenGui itself still persists across respawns (ResetOnSpawn=false), which is intentional.
+
+## 2026-09-06 — Jail-camping meter (OQ-008)
+
+- **Status**: Implemented, 12 new unit tests (harness 65/65 PASS), live-verified partial (runner starts, no errors). Full multi-occupant self-rescue deferred to 2-player session. Close-out GREEN.
+- **Code** (repo → Studio `ServerScriptService.JailCampingMeter`):
+  - `JailCampingMeterConfig.luau`: `ProximityRadius=6`, `GracePeriod=10`, `FillTime=20`, `BuffSeconds=3`.
+  - `JailCampingMeter.luau` (pure ModuleScript): `new()`, `newJail()`, `getMeter(state, cellId, now)`, `isFull(state, cellId, now)`, `update(state, defenderUserId, cellId, now)`, `selfRescue(state, cellId, jailState, playerState)`, `resetRound(state)`. Key design: `fillStart = graceStart + GracePeriod` anchors fill起点 to grace end, not detection time.
+  - `RunJailCampingMeter.server.lua`: Heartbeat proximity scanner; iterates jail exteriors via `JailState._cells`; checks Defender (non-Impostor) position against `ProximityRadius`; only fills meter if `JailState.occupantCount > 0`; on full meter calls `selfRescue` which releases all occupants and grants 3s speed buff + capture immunity via `PlayerState`.
+  - `ServerScriptService/Tests/JailCampingMeterTests.luau` (12 tests): meter zero for unknown jail, full after fill time, not full during grace, depletes on defender leave, resetRound clears, selfRescue guard, newJail state, meter=1.0 at fill, half meter at midpoint, refill restarts grace, config validation.
+  - `ServerScriptService/Tests/RunTests.luau`: 65 total (13 MatchState + 13 JailState + 16 ImpostorState + 25 SabotageState + 12 JailCampingMeter).
+- **Verification**: 65/65 unit tests (Edit-mode require, fresh instances); live play — runner prints `[JailCampingMeter] Running — radius=6m grace=10s fill=20s`; no console errors. Full multi-occupant self-rescue blocked by single-player session.
+- **Bugs fixed during implementation**: `fillStart` initially set to `now` instead of `graceStart + GracePeriod`, causing fill起点 to be anchored to detection time rather than grace end. Fixed by using `j.fillStart = j.graceStart + JailCampingMeterConfig.GracePeriod`.
+- **Tooling lesson**: Roblox `require` cache persists across `execute_luau` calls even after ModuleScript Source update; only destroying and recreating the ModuleScript (new instance) clears the cache.
+- **Truth/docs**: ticket retro + evidence recorded; project-truth/summary updated; CHANGELOG 0.1.10; current-task.md updated.
+- **Retrospective**: keep pure-module + `now` parameter pattern; keep `fillStart = graceStart + GracePeriod` anchoring; add `JailState.exteriorFor(cellId)` accessor to avoid `_cells` coupling; nothing to remove; carryover — HUD pass (REC-0007), 2-player session (REC-0004/0005), audio assets (REC-0006).
+- **Next**: release-prep items — HUD pass (REC-0007), 2-player session (multi-occupant self-rescue + full sabotage end-to-end), audio assets/tuning (REC-0006).
