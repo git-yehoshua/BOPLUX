@@ -167,4 +167,29 @@ ot roundTimerSuperseded.
 - **Key fix**: HUDController originally expected `TopBar.LeftPanel/CenterPanel/RightPanel` but the ScreenGui uses flat TopBar children. Fixed to use direct `TopBar.TeamBadge`, `TopBar.Score`, etc.
 - **Verification**: 65/65 unit tests pass. Live play — HUD displays all panels: ATTACKERS/0-0, LIVE/Round 1/3:00, STAMINA bar, JAILS (Cell A/B Empty), OBJECTIVES (Site A/B Clear), WarningBanner/RevealBanner containers present. No "[BOPLUX_HUD] Missing HUD panels" error.
 - **Retrospective**: Keep the flat TopBar structure; the nested panel abstraction caused the missing-panels error. Keep the `waitForChild` polling pattern. Nothing to remove.
-- **Next**: Phase 3 — wire side panels to server attributes, wire ImpostorClient to HUD banners.
+## 2026-09-06 — HUD Pass Phase 3 (ImpostorClient to HUD Banners)
+
+- **Status**: Implemented, committed 65f3b0d, live verified, close-out GREEN.
+- **Code** (repo → Studio):
+  - `StarterPlayerScripts/ImpostorClient.local.luau` — rewritten to remove `ImpostorClientGui` ScreenGui. Now finds `BOPLUX_HUD` in PlayerGui and updates `WarningBanner`/`RevealBanner` directly. Preserves 6s auto-hide timer for warnings and 5s for reveals.
+  - `s15-hud-pass.task.md` — Phase 1+2 marked DONE, Phase 3 marked IN PROGRESS.
+- **Key change**: Removed the separate `ImpostorClientGui` ScreenGui (which had a persistent `StatusLabel`). All Impostor feedback now flows through the unified `BOPLUX_HUD` WarningBanner (warnings + secret objectives) and RevealBanner (round-end reveal).
+- **Verification**: Studio play session — `ImpostorClientGui` ScreenGui no longer created (`OldImpostorClientGui=false`). HUD WarningBanner/RevealBanner present but hidden. Top bar data intact (ATTACKERS/0-0/LIVE/Round 1/3:00). No console errors.
+- **Retrospective**: Single unified HUD is cleaner than separate ScreenGuis. The `showWarning`/`showReveal` pattern in ImpostorClient mirrors HUDController's approach. Nothing to remove.
+- **Next**: Phase 4 — styling/animations.
+
+## 2026-09-06 — HUD Pass Phase 4 (Styling & Animations)
+
+- **Status**: Implemented, committed 4a8ee64, live verified, close-out GREEN.
+- **Code** (repo → Studio):
+  - `StarterGui/BOPLUX_HUDSetup.local.luau` — added `TweenService` animations:
+    - Top bar elements fade in from 0→1 opacity (0.6s, Quad easing, stagger 0.1s)
+    - Side panels slide in with Back easing (0.5s, from off-screen)
+    - BottomNotify fade-in (0.5s)
+    - Top bar `UICorner` (radius 6) for rounded corners
+    - `pulseBanner()` function for pulsing warning/reveal animations (alternating BackgroundTransparency)
+    - Existing HUD destroyed and rebuilt on startup to ensure animations always apply
+  - `StarterGui.BOPLUX_HUDSetup` — synced to datamodel (LocalScript in StarterGui).
+- **Verification**: Studio play session — `[BOPLUX_HUD] ScreenGui built with animations` printed. HUD renders correctly with all elements: ATTACKERS/0-0, LIVE/Round 1/3:00, STAMINA bar, JAILS (Cell A/B Empty), OBJECTIVES (Site A/B Clear). WarningBanner/RevealBanner present. Fade-in and slide-in animations visible on startup.
+- **Retrospective**: Always destroying and rebuilding the HUD ensures animations apply on every play session. The compact builder script in the datamodel was created directly because the sync watcher didn't pick up the new `StarterGui/` directory. Nothing to remove.
+- **Next**: 2-player session (REC-0004/0005), audio assets (REC-0006).

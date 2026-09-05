@@ -2,8 +2,8 @@
 
 ## Task Summary
 
-- Status: HUD Phase 1 & Phase 2 DONE (committed c805a3e). OQ-008 Jail-camping meter DONE (65/65 tests pass).
-- Task mode: meaningful feature (HUD framework + jail-camping meter)
+- Status: **HUD Pass ALL DONE** (Phases 1-4, commits c805a3e + 4a8ee64). OQ-008 Jail-camping meter DONE (65/65 tests pass).
+- Task mode: meaningful feature (complete HUD pass + jail-camping meter)
 - User request: "continue" — implement HUD pass and complete OQ-008.
 
 ## Implementation Summary — Jail-camping meter (OQ-008)
@@ -31,14 +31,18 @@
 - Impostor System — done (selection, parity warning, secret delivery, reveal, win condition).
 - Sabotage Interaction (OQ-006) — done (role validation, range check, cooldown, contextual effect, Tell).
 - **Jail-camping meter (OQ-008) — done** (proximity scan, grace/fill logic, self-rescue on full; 65/65 tests pass).
-- **HUD Pass — done** (Phase 1: server communication remotes; Phase 2: ScreenGui builder + HUDController; committed c805a3e).
+- **HUD Pass — done** (Phases 1-4, committed c805a3e + 4a8ee64):
+  - Phase 1: `MatchStateSync` + `PlayerStateSync` remotes, `CampingMeterFill` attribute
+  - Phase 2: `BOPLUX_HUDSetup.local.luau` builder + `HUDController.local.luau` flat TopBar structure
+  - Phase 3: `ImpostorClient.local.luau` wired to BOPLUX_HUD banners (removed ImpostorClientGui), task ticket updated
+  - Phase 4: `TweenService` fade-in (top bar), slide-in (side panels), pulse (banners), UICorner polish
 
 ## Next Task
 
-1. **HUD Phase 3** — wire panels to server systems, connect ImpostorClient to HUD banners (feedback rendering from server events).
-2. **HUD Phase 4** — styling/animations (visual polish, transitions, color theming).
-3. **2-player session** — real capture/reset/rescue/all-jailed + second-client leak scan + full sabotage end-to-end + multi-occupant self-rescue + HUD end-to-end.
-4. **Audio assets/tuning (REC-0006)** — placeholder sound IDs need real assets.
+1. **2-player session** — real capture/reset/rescue/all-jailed + second-client leak scan + full sabotage end-to-end + multi-occupant self-rescue + HUD end-to-end.
+2. **Audio assets/tuning (REC-0006)** — placeholder sound IDs need real assets.
+3. **JailCampingMeter HUD indicator** — visual camping meter feedback in HUD (tracked as potential future REC from OQ-008 retro).
+4. **JailState.exteriorFor(cellId)** accessor — replace `_cells` coupling in RunJailCampingMeter (carried from OQ-008 retro).
 
 ## Verification Route Notes (carried learning)
 
@@ -72,6 +76,6 @@
 ## Close-Out Notes
 
 - Truth Alignment Status: GREEN
-- Recommendations: OQ-008 Done (implemented and verified); HUD Phase 1+2 Done (committed c805a3e); REC-0006 unchanged (audio assets); REC-0003/0004/0005 Proposed (tooling/2-player sessions). No new recommendations identified.
-- Remaining concerns (deferred): HUD Phase 3-4 (wire panels, styling/animations), 2-player session, audio assets/tuning.
-- Natural next prompt: "HUD Phase 3 — wire panels to server systems" or "2-player session for full end-to-end verification".
+- Recommendations: OQ-008 Done (implemented and verified); HUD Pass Done (Phases 1-4, committed c805a3e + 4a8ee64); REC-0006 unchanged (audio assets); REC-0003/0004/0005 Proposed (tooling/2-player sessions). No new recommendations identified.
+- Remaining concerns (deferred): 2-player session (REC-0004/0005), audio assets/tuning (REC-0006), JailCampingMeter HUD indicator, JailState.exteriorFor accessor.
+- Natural next prompt: "2-player session for full end-to-end verification".
