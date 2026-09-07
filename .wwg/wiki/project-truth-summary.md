@@ -17,9 +17,9 @@ This summary helps agents orient quickly. The full canonical source remains `pro
 - Product identity: BOPLUX — multiplayer round-based first-person Roblox game; 5v5 Plant Mode combining Taguan, Patintero, Agawan Base, and a hidden Impostor.
 - Primary users and roles: Attackers, Defenders, and a secret Impostor (30% chance per round).
 - Canonical scope: typically 6-round matches (7th sudden-death round on a 3–3 tie; halftime after round 3), capture/jail/rescue (breakout frees only the completing player, rewardless), plant objective (2 sites v1.0), Sabotage interaction, Jail-camping meter, round win conditions, Impostor system, server-authoritative Roblox architecture (GDD §15).
-- Architecture truth: server-authoritative; client requests via GDD §15 RemoteEvents; Impostor role state never replicates except to the Impostor's own client.
+- Architecture truth: server-authoritative; client requests via GDD §15 RemoteEvents; Impostor role state never replicates except to the Impostor's own client. Single experience, single place, single live server simulation; maps are versioned packages in `ServerStorage.Maps` cloned into `Workspace.MapRuntime.ActiveMap` per match (promoted 2026-09-06).
 - Safety and production boundaries: never trust client RemoteEvents; prototype-stage, no production posture.
-- Current product direction: playable v1.0 per the GDD and Open Question Resolutions v1 + v2; all six §15 systems implemented and verified (Match Manager → Player State → Jail → Objective → Audio → Impostor); OQ-006 Sabotage interaction implemented; remaining work: release-prep items (CuePlayer fix, HUD pass, 2-player session, audio tuning); all open decisions resolved.
+- Current product direction: playable v1.0 per the GDD and Open Question Resolutions v1 + v2; all six §15 systems plus OQ-006 Sabotage and OQ-008 camping meter are implemented and unit-tested (65/65). Greybox map `Courtyard_v001` built and active per the promoted map contract. **Verification tier status: everything is unit-tested / single-client verified only — no system has completed a genuine 2-player session (real capture, real defuse under contest, rescue-with-occupant, all-jailed, audio audibility bands, sabotage end-to-end, camping meter under real conditions). Remaining work: 2-player verification pass, release-prep items.**
 
 ## Canonical Terms
 

@@ -32,7 +32,7 @@ The authoritative game design source is **Core Game Design Specification v1.1 �
 - OQ-008: Jail-camping meter approved with parameters — tracked as its own Workspace item with independent validation.
 - OQ-009: Only the first interactor progresses a rescue/breakout attempt; additional present teammates do not stack or accelerate it.
 
-**Open Question Resolutions v2** (owner, in-chat 2026-09-05; raw note in `wiki/01-sources/raw/notes.md`) adds and confirms:
+**Open Question Resolutions v2** (owner; delivered in-chat 2026-09-05, artifact on disk 2026-09-06 `src_20260906_open_question_resolutions_v2`, raw file `wiki/01-sources/raw/uploads/docs/Open_Questions_Resolutions_v2.md`) adds and confirms:
 
 - OQ-010: A 3–3 tied match (most rounds won equal after 6) goes to a 7th sudden-death round in the same 3-minute format; roles follow the normal alternation (round 7 = block-boundary swap, matching rounds 1–3 arrangement); the round-7 winner wins the match outright. Ties are now fully decided.
 - OQ-011: Team assignment is randomized at match start — all players are shuffled, split into two groups, first half initial Attackers and second half initial Defenders (join order is NOT used).
@@ -98,6 +98,7 @@ Accepted architecture:
 - Audio System in `ReplicatedStorage`: server fires `PlayBreakoutWarning`, `PlayImpostorTell`, and the Sabotage "Tell" with position-only payload after computing audibility; never role information
 - Impostor System lives exclusively in `ServerScriptService`; role state is never replicated to any client except the Impostor's own client (GDD §15 design note)
 - Jail-camping meter is server-evaluated proximity logic (6m/10s grace/20s fill per OQ-008), handled as its own system item
+- Map/place topology (promoted 2026-09-06 from `src_20260906_map_architecture_recommendation` with owner approval): BOPLUX uses a single experience, single place, single live server simulation; maps are versioned packages in `ServerStorage.Maps` cloned into `Workspace.MapRuntime.ActiveMap` per match and destroyed after. Every map package must satisfy the map contract: two Jails (A/B with Interior/Exterior markers), two Plant Sites (A/B with Interior markers), two enclosed single-exit spawn rooms; gameplay systems read contract attributes/markers and stay map-agnostic. **Greybox map `Courtyard_v001` is BUILT and active (2026-09-06): systems register Jails/Sites from the map contract markers; per-match rotation activates when a second map template lands.**
 
 Do not introduce without approval:
 

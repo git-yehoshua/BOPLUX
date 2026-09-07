@@ -2,14 +2,72 @@
 
 All notable changes to BOPLUX are recorded here in non-technical, outcome-based language.
 
+## [0.1.15] - 2026-09-06
+
 ### Added
 
-- **HUD Pass Phase 3**: ImpostorClient wired to unified HUD banners — removed `ImpostorClientGui` ScreenGui, now updates `BOPLUX_HUD` WarningBanner/RevealBanner directly via MatchSystems remotes. Task ticket and docs updated.
-- **HUD Pass Phase 4**: Animations and styling polish — `TweenService` fade-in (top bar elements, 0.6s staggered), slide-in (side panels, Back easing), pulse animation for warning/reveal banners, `UICorner` polish on TopBar. Builder script rebuilt on every play session to ensure animations apply.
+- **Minimap with live status markers**: a small top-right map of the courtyard now shows all four objectives at their true positions — Jail A/B and Plant Site A/B as color-coded diamonds (green clear, red occupied/planted, amber channel) — plus a "you are here" dot with a facing direction that tracks your movement. Replaces the two floating side panels, which are gone.
+
+### Changed
+
+- **Health reads as a bar now**: the health pips became one continuous rounded bar (fills left-to-right) with the number printed on it, directly above the unchanged stamina pips.
+- **Status notifications moved to the top**: warning/reveal banners (including the Impostor objective) now sit just below the round timer, above all gameplay content, instead of at the bottom.
+- **Chat UI shell is disabled along with chat itself**: Roblox's chat window/input bar no longer mounts on screen (it could still appear at top-left even after chat was switched off).
+
+### Audit (no change)
+
+- **Sound system checked**: the audio pipeline (jail-breakout warning + Impostor tell) is fully wired server-to-client, but both cues still play the same engine placeholder ping — real audio assets were never uploaded (existing recommendation REC-0006; also pending license confirmation). Nothing was changed this round.
+
+## [0.1.14] - 2026-09-06
+
+### Added
+
+- **Health now has its own display**: a large health number with a white segmented pip row sits at bottom-center, directly above the stamina pips, so health and stamina read as one stacked unit. It updates instantly on damage and healing with no background polling.
+- **Diamond status indicators on the Jails and Objectives panels**: each cell/site is now a color-coded diamond (green = clear, red = occupied/planted, amber = a capture or defuse channel is in progress) with its letter underneath, replacing the small text rows. Jail-camping bars are unchanged.
+- **Fixed crosshair during gameplay**: the mouse cursor is hidden and a small fixed dot appears at screen center while a match is running; the normal cursor returns whenever a menu or other screen is open.
 
 ### Fixed
 
+- **Status notifications no longer cover the health/stamina stack**: warning and reveal banners (including the Impostor objective text) moved up so they sit just above the vitals stack instead of on top of it.
+
+## [0.1.13] - 2026-09-06
+
+### Added
+
+- **Stamina now lives inside the main vitals area**: a slim cyan segmented pip row at bottom-center fills and drains with real sprint stamina (12 segments over the 6-second sprint budget), replacing the separate green bar that used to sit at the top of the screen next to the scoreboard. It updates live during sprint and regen, with no background polling.
+- **Default Roblox health and hotbar displays are disabled** (the custom HUD covers them), and the default chat is disabled as well — Roblox's automatic chat-translation notice cannot be suppressed by the experience (it reflects each player's own account setting), so chat is fully off until a custom chat, if ever, replaces it. The default player list remains.
+
+## [0.1.12] - 2026-09-06
+
+### Added
+
+- **Tactical HUD panels for Jails and Objectives**: the two side status panels now use angled/cut military-style frames from a real UI kit (SunGraphica's free Sci-Fi UI pack, CC BY 4.0 — credit "SunGraphica" is owed in in-game credits before public release). The Jails panel is tinted red with a padlock header icon, the Objectives panel blue with a target header icon, and each header gets a kit accent underline. Panels are true 9-slice images, so they keep their angled corners at any size. All status text and camping-meter bars work exactly as before — only the visual container changed.
+- Kit acquired, extracted, uploaded, and integrated end-to-end by the agent (no manual download/import steps); provenance, license, and uploaded asset IDs recorded in the wiki source intake.
+
+## [0.1.11] - 2026-09-06
+
+### Added
+
+- **The game now has a real map**: the greybox `Courtyard_v001` replaces the bare placeholder baseplate. It provides a walled playfield, lane cover (walls and crates), two enclosed single-exit spawn rooms (one per team side), two Jails, and two plant sites — all laid out around the verified gameplay anchor coordinates. Maps now live as templates in `ServerStorage` and activate as `Workspace.MapRuntime.ActiveMap`; the Jail and Objective systems read the map's contract markers (Jail/Site IDs) instead of building their own placeholder geometry, which is what makes future maps a pure content task (zero code changes).
+
+### Fixed
+
+- **Jail-camping meter could never actually run**: the meter's proximity loop looked for jail positions through a field that never existed (`JailState._cells`), so despite passing its unit tests the meter silently did nothing in live play. A proper accessor (`JailState.exteriorFor`) now feeds it the real exterior position.
+- **Camping-meter HUD bars never moved**: the meter wrote its fill level to the wrong jail name (`"A"` instead of `"Cell_A"`), so the attribute the HUD reads was never set. Fixed.
+- **Duplicate sabotage remotes**: stale copies of `RequestSabotage`/`SabotageDebug` could pile up across sessions (and a duplicate `SabotageSystem` script folder ran alongside the real one). Remote creation is now deduplicated and the stale folder was removed.
+
+### Added (previous unreleased)
+
+- **Demo Showcase self-play driver**: `StarterPlayerScripts/DemoShowcase.local.luau` — a demo-mode-only LocalScript (gated behind `DemoMode` attribute, off by default in production) that autonomously drives a full match round in Studio Play: match start → Defender jail fill with jail-camping exposed through the debug remote → jail breakout warning pings every 3s (~12s of warnings) → Defender release → attacker walk to Site A → plant → detonation → Impostor reveal. Lets a single developer watch the entire loop (capture → breakout → plant → detonate → round end) without manual input. Verified live end-to-end with a clean console.
+- **HUD Pass Phase 3**: ImpostorClient wired to unified HUD banners — removed `ImpostorClientGui` ScreenGui, now updates `BOPLUX_HUD` WarningBanner/RevealBanner directly via MatchSystems remotes. Task ticket and docs updated.
+- **HUD Pass Phase 4**: Animations and styling polish — `TweenService` fade-in (top bar elements, 0.6s staggered), slide-in (side panels, Back easing), pulse animation for warning/reveal banners, `UICorner` polish on TopBar. Builder script rebuilt on every play session to ensure animations apply.
+
+### Fixed (previous unreleased)
+
+- **CuePlayer DopplerMode crash (silent-audio root cause)**: `CuePlayer.local.luau` set `sound.DopplerMode = Enum.DopplerMode.Off`, which does not exist on Roblox — every `playCue()` call crashed before `sound:Play()`, so no audio cue (breakout warning, Impostor Tell) was ever audible despite the engine loading the sound fine. Removed the invalid line. Zero console errors and `SoundAttachment` positional-sound playback now verified live in Play mode.
 - **HUD builder sync**: `BOPLUX_HUDSetup.local.luau` now destroys existing HUD clone before rebuilding, ensuring animations always apply on every play session. Builder script synced to datamodel's StarterGui.
+- **MatchManager sync**: Fixed scriptscriptservice not syncing by auto-creating `MatchSystems` folder and `MatchStateSync` RemoteEvent in ReplicatedStorage if missing, resolving `cannot read 'MatchStateSync'` error when firing client state.
+- **PlayerStateSync added**: Added auto-creation of `PlayerStateSync` RemoteEvent in MatchManager to support client-side player state synchronization (stamina, jail status, capture immunity HUD updates).
 
 ## [0.1.10] - 2026-09-06
 

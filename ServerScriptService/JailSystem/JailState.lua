@@ -24,6 +24,11 @@ function JailState.cellIds()
 	return ids
 end
 
+function JailState.exteriorFor(cellId)
+	local cell = cells[cellId]
+	return cell and cell.exterior or nil
+end
+
 function JailState.cellForPlayer(player)
 	return jailByPlayer[player]
 end

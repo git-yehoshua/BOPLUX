@@ -9,20 +9,20 @@ local JailState = require(script.Parent.JailState)
 local MatchState = require(ServerScriptService.MatchManager.MatchState)
 local PlayerStateModule = require(ServerScriptService.PlayerState.PlayerStateModule)
 
+-- Must stay in sync with MapRuntime.MapBuilder JAIL_LAYOUTS (teleport + door math only).
 local CELL_LAYOUT = {
 	{
 		id = "A",
-		center = Vector3.new(24, 8, 20),
+		center = Vector3.new(24, 3, 20),
 		doorAxis = Vector3.new(1, 0, 0),
 	},
 	{
 		id = "B",
-		center = Vector3.new(-24, 8, -20),
+		center = Vector3.new(-24, 3, -20),
 		doorAxis = Vector3.new(-1, 0, 0),
 	},
 }
 
-local cellsModel
 local cellMarkers = {}
 
 local jailEvents = Instance.new("Folder")
@@ -122,70 +122,22 @@ local function updateCellAttributes(cellId)
 	end
 end
 
-local function buildCells()
-	cellsModel = Instance.new("Folder")
-	cellsModel.Name = "Jails"
-	cellsModel.Parent = Workspace
-
+local function registerCellsFromMap()
+	local jails = Workspace:WaitForChild("Jails", 30)
+	if not jails then
+		warn("[JailSystem] MapRuntime did not provide Workspace.Jails within 30s - no cells registered")
+		return
+	end
 	local breakoutScale = script:GetAttribute("DebugBreakoutScale") or 1
 	local rescueScale = script:GetAttribute("DebugRescueScale") or 1
-
-	local color = Color3.fromRGB(255, 170, 120)
-
-	local function addBox(model, name, position, size)
-		local part = Instance.new("Part")
-		part.Name = name
-		part.Anchored = true
-		part.CanCollide = true
-		part.Size = size
-		part.CFrame = CFrame.new(position)
-		part.Color = color
-		part.Material = Enum.Material.Concrete
-		part.Parent = model
-		return part
-	end
-
-	for _, layout in ipairs(CELL_LAYOUT) do
-		local id = layout.id
-		local center = layout.center
-		local doorAxis = layout.doorAxis
-
-		local model = Instance.new("Model")
-		model.Name = "Cell_" .. id
-		model.Parent = cellsModel
-
-		addBox(model, "Floor", center - Vector3.new(0, 2.75, 0), Vector3.new(6, 0.5, 6))
-		addBox(model, "Ceiling", center + Vector3.new(0, 2.75, 0), Vector3.new(6, 0.5, 6))
-		addBox(model, "Back", center - doorAxis * 3, Vector3.new(0.5, 6, 6))
-		addBox(model, "Front", center + doorAxis * 3, Vector3.new(0.5, 6, 6))
-		addBox(model, "SideL", center - Vector3.new(0, 0, 3), Vector3.new(6, 6, 0.5))
-		addBox(model, "SideR", center + Vector3.new(0, 0, 3), Vector3.new(6, 6, 0.5))
-
-		local interior = Instance.new("Part")
-		interior.Name = "Interior"
-		interior.Anchored = true
-		interior.CanCollide = false
-		interior.Transparency = 1
-		interior.Size = Vector3.new(4, 4, 4)
-		interior.CFrame = CFrame.new(center)
-		interior:SetAttribute("CellId", id)
-		interior:SetAttribute("JailOccupantCount", 0)
-		interior:SetAttribute("ChannelKind", nil)
-		interior:SetAttribute("BreakoutProgress", 0)
-		interior:SetAttribute("RescueProgress", 0)
-		interior.Parent = model
-
-		local exterior = Instance.new("Part")
-		exterior.Name = "Exterior"
-		exterior.Anchored = true
-		exterior.CanCollide = false
-		exterior.Transparency = 1
-		exterior.Size = Vector3.new(3, 3, 3)
-		exterior.CFrame = CFrame.new(center + doorAxis * 4.5)
-		exterior.Parent = model
-
-		cellMarkers[id] = interior
-		JailState.registerCell(id, center, exterior.CFrame.Position, JailConfig.BreakoutSeconds * breakoutScale, JailConfig.RescueSeconds * rescueScale)
+	for _, model in ipairs(jails:GetChildren()) do
+		local interior = model:FindFirstChild("Interior")
+		local exterior = model:FindFirstChild("Exterior")
+		local cellId = interior and interior:GetAttribute("CellId")
+		if interior and exterior and cellId then
+			cellMarkers[cellId] = interior
+			JailState.registerCell(cellId, interior.Position, exterior.Position, JailConfig.BreakoutSeconds * breakoutScale, JailConfig.RescueSeconds * rescueScale)
+		end
 	end
 end
 
@@ -521,7 +473,7 @@ Players.PlayerRemoving:Connect(function(player)
 	end
 end)
 
-buildCells()
+registerCellsFromMap()
 wireRemotes()
 wireMatchEvents()
 

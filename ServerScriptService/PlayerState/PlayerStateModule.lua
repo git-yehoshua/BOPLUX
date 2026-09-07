@@ -61,7 +61,15 @@ function PlayerStateModule.step(player, dt)
 		return
 	end
 	if state.sprinting then
-		state.stamina = math.max(0, state.stamina - dt)
+		-- Sprint only drains stamina while actually moving (finding #3: holding
+		-- Shift stationary drained stamina without the character sprinting).
+		local humanoid = humanoidFor(player)
+		local moving = humanoid ~= nil and humanoid.MoveDirection.Magnitude > 0.01
+		if moving then
+			state.stamina = math.max(0, state.stamina - dt)
+		else
+			state.stamina = math.min(staminaCapacity, state.stamina + dt * sprintRegenPerSecond)
+		end
 		if state.stamina <= 0 then
 			state.sprinting = false
 			applySpeed(player, state)

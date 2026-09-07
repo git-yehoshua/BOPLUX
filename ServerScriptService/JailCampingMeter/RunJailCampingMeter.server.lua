@@ -6,6 +6,7 @@ local Workspace = game:GetService("Workspace")
 local JailCampingMeter = require(ServerScriptService.JailCampingMeter.JailCampingMeter)
 local JailCampingMeterConfig = require(ServerScriptService.JailCampingMeter.JailCampingMeterConfig)
 local JailState = require(ServerScriptService.JailSystem.JailState)
+local MatchState = require(ServerScriptService.MatchManager.MatchState)
 local PlayerState = require(ServerScriptService.PlayerState.PlayerStateModule)
 local ImpostorState = require(ServerScriptService.ImpostorSystem.ImpostorState)
 
@@ -21,8 +22,7 @@ local function initJails()
 end
 
 local function getJailExterior(cellId)
-	local cell = JailState._cells and JailState._cells[cellId]
-	return cell and cell.exterior
+	return JailState.exteriorFor(cellId)
 end
 
 local function getCharPosition(player)
@@ -34,6 +34,21 @@ end
 
 local function isImpostor(player)
 	return ImpostorState.current and ImpostorState.current.userId == player.UserId
+end
+
+-- A camper is a DEFENDER (finding #6: the meter previously accepted ANY non-impostor
+-- player - including the jailed Attackers standing INSIDE the cell, who could then
+-- trigger their own self-rescue and bypass the 45s breakout entirely).
+local function isCamper(player)
+	if isImpostor(player) then
+		return false
+	end
+	if JailState.isJailed(player) then
+		return false
+	end
+	local live = MatchState.liveState()
+	local team = live and MatchState.teamFor(live, player)
+	return team == MatchState.TEAM.Defenders
 end
 
 local function dist3(a, b)
@@ -55,7 +70,8 @@ end
 local function setMeterAttribute(cellId, fill)
 	local jailsFolder = Workspace:FindFirstChild("Jails")
 	if not jailsFolder then return end
-	local cell = jailsFolder:FindFirstChild(cellId)
+	-- JailState cell ids are "A"/"B"; map models are named "Cell_A"/"Cell_B"
+	local cell = jailsFolder:FindFirstChild("Cell_" .. cellId)
 	if not cell then return end
 	local interior = cell:FindFirstChild("Interior")
 	if interior then
@@ -80,7 +96,7 @@ local function onHeartbeat()
 				local closestDefender = nil
 				local closestDist = math.huge
 				for _, player in ipairs(Players:GetPlayers()) do
-					if not isImpostor(player) then
+					if isCamper(player) then
 						local pos = getCharPosition(player)
 						if pos then
 							local d = dist3(pos, ext)

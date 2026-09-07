@@ -23,6 +23,35 @@ local campingOrange = Color3.fromRGB(255, 140, 50)
 local spdBlue = Color3.fromRGB(100, 200, 255)
 local immYellow = Color3.fromRGB(255, 200, 80)
 
+-- Kit icons (SunGraphica "FREE Sci-Fi UI", CC BY 4.0) — hidden pending owner review; panels use flat translucent style with single-edge accent frames per owner spec
+local KIT_LOCK = "rbxassetid://79475174670694"
+local KIT_TARGET = "rbxassetid://93442781397229"
+
+local function applyPanelChrome(panel, iconAsset, iconW, iconH, accentSide, accentColor)
+	local icon = Instance.new("ImageLabel")
+	icon.Name = "HeaderIcon"
+	icon.BackgroundTransparency = 1
+	icon.Size = UDim2.new(0, iconW, 0, iconH)
+	icon.Position = UDim2.new(0, 5, 0, 2)
+	icon.Image = iconAsset
+	icon.ImageColor3 = lightText
+	icon.Visible = false
+	icon.Parent = panel
+	local t = panel:FindFirstChild("Title")
+	if t then
+		t.Size = UDim2.new(1, -12, 0, 14)
+		t.Position = UDim2.new(0, 6, 0, 2)
+	end
+	local line = Instance.new("Frame")
+	line.Name = "AccentLine"
+	line.AnchorPoint = Vector2.new(0, 0)
+	line.Size = UDim2.new(0, 2, 1, 0)
+	line.Position = accentSide == "left" and UDim2.new(0, 0, 0, 0) or UDim2.new(1, -2, 0, 0)
+	line.BackgroundColor3 = accentColor
+	line.BorderSizePixel = 0
+	line.Parent = panel
+end
+
 local hud = Instance.new("ScreenGui")
 hud.Name = "BOPLUX_HUD"
 hud.ResetOnSpawn = false
@@ -116,43 +145,6 @@ timerLabel.TextXAlignment = Enum.TextXAlignment.Center
 timerLabel.TextYAlignment = Enum.TextYAlignment.Center
 timerLabel.Parent = topBar
 
-local staminaLabel = Instance.new("TextLabel")
-staminaLabel.Name = "StaminaLabel"
-staminaLabel.Size = UDim2.new(0, 60, 0, 10)
-staminaLabel.Position = UDim2.new(1, -170, 0, 6)
-staminaLabel.BackgroundTransparency = 1
-staminaLabel.FontFace = font
-staminaLabel.TextSize = 9
-staminaLabel.TextColor3 = dimText
-staminaLabel.Text = "STAMINA"
-staminaLabel.TextStrokeTransparency = 1
-staminaLabel.TextXAlignment = Enum.TextXAlignment.Center
-staminaLabel.TextYAlignment = Enum.TextYAlignment.Center
-staminaLabel.Parent = topBar
-
-local staminaBar = Instance.new("Frame")
-staminaBar.Name = "StaminaBar"
-staminaBar.Size = UDim2.new(0, 150, 0, 8)
-staminaBar.Position = UDim2.new(1, -170, 0, 20)
-staminaBar.BackgroundColor3 = barBg
-staminaBar.BorderSizePixel = 0
-staminaBar.Parent = topBar
-
-local staminaCorner = Instance.new("UICorner")
-staminaCorner.CornerRadius = UDim.new(0, 3)
-staminaCorner.Parent = staminaBar
-
-local staminaFill = Instance.new("Frame")
-staminaFill.Name = "Fill"
-staminaFill.Size = UDim2.new(1, 0, 1, 0)
-staminaFill.BackgroundColor3 = fillGreen
-staminaFill.BorderSizePixel = 0
-staminaFill.Parent = staminaBar
-
-local staminaFillCorner = Instance.new("UICorner")
-staminaFillCorner.CornerRadius = UDim.new(0, 3)
-staminaFillCorner.Parent = staminaFill
-
 local speedBuff = Instance.new("TextLabel")
 speedBuff.Name = "SpeedBuff"
 speedBuff.Size = UDim2.new(0, 30, 0, 10)
@@ -186,7 +178,9 @@ immunityLabel.Parent = topBar
 local bottomNotify = Instance.new("Frame")
 bottomNotify.Name = "BottomNotify"
 bottomNotify.Size = UDim2.new(0.5, 0, 0, 44)
-bottomNotify.Position = UDim2.new(0.25, 0, 1, -64)
+bottomNotify.AnchorPoint = Vector2.new(0.5, 0)
+-- Below the round timer, above all gameplay content (owner-specified coordinates)
+bottomNotify.Position = UDim2.new(0.5, 0, 0.16, 0)
 bottomNotify.BackgroundTransparency = 1
 bottomNotify.BorderSizePixel = 1
 bottomNotify.BorderColor3 = darkBg
@@ -250,177 +244,46 @@ revealText.TextXAlignment = Enum.TextXAlignment.Center
 revealText.TextYAlignment = Enum.TextYAlignment.Center
 revealText.Parent = revealBanner
 
-local leftSide = Instance.new("Frame")
-leftSide.Name = "LeftSide"
-leftSide.Size = UDim2.new(0, 160, 0, 70)
-leftSide.Position = UDim2.new(0, 8, 0.5, -35)
-leftSide.BackgroundTransparency = 1
-leftSide.BorderSizePixel = 1
-leftSide.BorderColor3 = darkBg
-leftSide.Parent = hud
+-- Side status panels replaced by Minimap markers (owner-directed)
 
-local jailPanel = Instance.new("Frame")
-jailPanel.Name = "JailPanel"
-jailPanel.Size = UDim2.new(1, 0, 1, 0)
-jailPanel.Position = UDim2.new(0, 0, 0, 0)
-jailPanel.BackgroundColor3 = panelBg
-jailPanel.BackgroundTransparency = 0.35
-jailPanel.BorderSizePixel = 0
-jailPanel.Visible = false
-jailPanel.Parent = leftSide
+-- Vitals stack: continuous health bar (number overlaid) above stamina pips, bottom-center
+local healthBar = Instance.new("Frame")
+healthBar.Name = "HealthBar"
+healthBar.AnchorPoint = Vector2.new(0.5, 1)
+healthBar.Position = UDim2.new(0.5, 0, 1, -72)
+healthBar.Size = UDim2.new(0, 180, 0, 18)
+healthBar.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+healthBar.BackgroundTransparency = 0.35
+healthBar.BorderSizePixel = 0
+healthBar.Parent = hud
+local hbCorner = Instance.new("UICorner")
+hbCorner.CornerRadius = UDim.new(0, 5)
+hbCorner.Parent = healthBar
 
-local jailCorner = Instance.new("UICorner")
-jailCorner.CornerRadius = UDim.new(0, 6)
-jailCorner.Parent = jailPanel
+local healthFill = Instance.new("Frame")
+healthFill.Name = "Fill"
+healthFill.Size = UDim2.new(1, 0, 1, 0)
+healthFill.BackgroundColor3 = Color3.fromRGB(235, 235, 235)
+healthFill.BorderSizePixel = 0
+healthFill.Parent = healthBar
+local hfCorner = Instance.new("UICorner")
+hfCorner.CornerRadius = UDim.new(0, 5)
+hfCorner.Parent = healthFill
 
-local jailTitle = Instance.new("TextLabel")
-jailTitle.Name = "Title"
-jailTitle.Size = UDim2.new(1, -12, 0, 14)
-jailTitle.Position = UDim2.new(0, 6, 0, 2)
-jailTitle.BackgroundTransparency = 1
-jailTitle.FontFace = font
-jailTitle.TextSize = 8
-jailTitle.TextScaled = true
-jailTitle.TextColor3 = lightText
-jailTitle.Text = "JAILS"
-jailTitle.TextStrokeTransparency = 0.5
-jailTitle.TextStrokeColor3 = Color3.new(0, 0, 0)
-jailTitle.TextXAlignment = Enum.TextXAlignment.Left
-jailTitle.TextYAlignment = Enum.TextYAlignment.Center
-jailTitle.Parent = jailPanel
-
-local cellA = Instance.new("TextLabel")
-cellA.Name = "CellA"
-cellA.Size = UDim2.new(1, -12, 0, 12)
-cellA.Position = UDim2.new(0, 6, 0, 18)
-cellA.BackgroundTransparency = 1
-cellA.FontFace = font
-cellA.TextSize = 8
-cellA.TextScaled = true
-cellA.TextColor3 = dimText
-cellA.Text = "Cell A: Empty"
-cellA.TextStrokeTransparency = 0.5
-cellA.TextStrokeColor3 = Color3.new(0, 0, 0)
-cellA.TextXAlignment = Enum.TextXAlignment.Left
-cellA.TextYAlignment = Enum.TextYAlignment.Center
-cellA.Parent = jailPanel
-
-local cellB = Instance.new("TextLabel")
-cellB.Name = "CellB"
-cellB.Size = UDim2.new(1, -12, 0, 12)
-cellB.Position = UDim2.new(0, 6, 0, 32)
-cellB.BackgroundTransparency = 1
-cellB.FontFace = font
-cellB.TextSize = 8
-cellB.TextScaled = true
-cellB.TextColor3 = dimText
-cellB.Text = "Cell B: Empty"
-cellB.TextStrokeTransparency = 0.5
-cellB.TextStrokeColor3 = Color3.new(0, 0, 0)
-cellB.TextXAlignment = Enum.TextXAlignment.Left
-cellB.TextYAlignment = Enum.TextYAlignment.Center
-cellB.Parent = jailPanel
-
-local function makeCampingBar(name, posY)
-	local bar = Instance.new("Frame")
-	bar.Name = name
-	bar.Size = UDim2.new(1, -12, 0, 5)
-	bar.Position = UDim2.new(0, 6, 0, posY)
-	bar.BackgroundColor3 = barBg
-	bar.BorderSizePixel = 0
-	bar.Parent = jailPanel
-
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 2)
-	corner.Parent = bar
-
-	local fill = Instance.new("Frame")
-	fill.Name = "Fill"
-	fill.Size = UDim2.new(0, 0, 1, 0)
-	fill.BackgroundColor3 = campingOrange
-	fill.BorderSizePixel = 0
-	fill.Parent = bar
-
-	local fillCorner = Instance.new("UICorner")
-	fillCorner.CornerRadius = UDim.new(0, 2)
-	fillCorner.Parent = fill
-
-	return bar
-end
-
-makeCampingBar("CampingA", 50)
-makeCampingBar("CampingB", 58)
-
-local rightSide = Instance.new("Frame")
-rightSide.Name = "RightSide"
-rightSide.Size = UDim2.new(0, 160, 0, 50)
-rightSide.Position = UDim2.new(1, -168, 0.5, -25)
-rightSide.BackgroundTransparency = 1
-rightSide.BorderSizePixel = 1
-rightSide.BorderColor3 = darkBg
-rightSide.Parent = hud
-
-local objPanel = Instance.new("Frame")
-objPanel.Name = "ObjectivePanel"
-objPanel.Size = UDim2.new(1, 0, 1, 0)
-objPanel.Position = UDim2.new(0, 0, 0, 0)
-objPanel.BackgroundColor3 = panelBg
-objPanel.BackgroundTransparency = 0.35
-objPanel.BorderSizePixel = 0
-objPanel.Visible = false
-objPanel.Parent = rightSide
-
-local objCorner = Instance.new("UICorner")
-objCorner.CornerRadius = UDim.new(0, 6)
-objCorner.Parent = objPanel
-
-local objTitle = Instance.new("TextLabel")
-objTitle.Name = "Title"
-objTitle.Size = UDim2.new(1, -12, 0, 14)
-objTitle.Position = UDim2.new(0, 6, 0, 2)
-objTitle.BackgroundTransparency = 1
-objTitle.FontFace = font
-objTitle.TextSize = 8
-objTitle.TextScaled = true
-objTitle.TextColor3 = lightText
-objTitle.Text = "OBJECTIVES"
-objTitle.TextStrokeTransparency = 0.5
-objTitle.TextStrokeColor3 = Color3.new(0, 0, 0)
-objTitle.TextXAlignment = Enum.TextXAlignment.Left
-objTitle.TextYAlignment = Enum.TextYAlignment.Center
-objTitle.Parent = objPanel
-
-local siteA = Instance.new("TextLabel")
-siteA.Name = "SiteA"
-siteA.Size = UDim2.new(1, -12, 0, 12)
-siteA.Position = UDim2.new(0, 6, 0, 18)
-siteA.BackgroundTransparency = 1
-siteA.FontFace = font
-siteA.TextSize = 8
-siteA.TextScaled = true
-siteA.TextColor3 = dimText
-siteA.Text = "Site A: Clear"
-siteA.TextStrokeTransparency = 0.5
-siteA.TextStrokeColor3 = Color3.new(0, 0, 0)
-siteA.TextXAlignment = Enum.TextXAlignment.Left
-siteA.TextYAlignment = Enum.TextYAlignment.Center
-siteA.Parent = objPanel
-
-local siteB = Instance.new("TextLabel")
-siteB.Name = "SiteB"
-siteB.Size = UDim2.new(1, -12, 0, 12)
-siteB.Position = UDim2.new(0, 6, 0, 32)
-siteB.BackgroundTransparency = 1
-siteB.FontFace = font
-siteB.TextSize = 8
-siteB.TextScaled = true
-siteB.TextColor3 = dimText
-siteB.Text = "Site B: Clear"
-siteB.TextStrokeTransparency = 0.5
-siteB.TextStrokeColor3 = Color3.new(0, 0, 0)
-siteB.TextXAlignment = Enum.TextXAlignment.Left
-siteB.TextYAlignment = Enum.TextYAlignment.Center
-siteB.Parent = objPanel
+local healthNumber = Instance.new("TextLabel")
+healthNumber.Name = "HealthNumber"
+healthNumber.AnchorPoint = Vector2.new(0.5, 1)
+healthNumber.Position = UDim2.new(0.5, 0, 1, -72)
+healthNumber.Size = UDim2.new(0, 180, 0, 18)
+healthNumber.BackgroundTransparency = 1
+healthNumber.ZIndex = 2
+healthNumber.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy)
+healthNumber.TextSize = 13
+healthNumber.TextColor3 = Color3.fromRGB(20, 20, 26)
+healthNumber.TextXAlignment = Enum.TextXAlignment.Center
+healthNumber.Text = "100"
+healthNumber.TextStrokeTransparency = 1
+healthNumber.Parent = hud
 
 local TweenService = game:GetService("TweenService")
 
@@ -433,7 +296,7 @@ topBar.BackgroundTransparency = 0.25
 local topBarFade = TweenService:Create(topBar, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 0.25})
 topBarFade:Play()
 
-for _, child in ipairs({teamBadge, scoreLabel, phaseLabel, roundLabel, timerLabel, staminaLabel, staminaBar, speedBuff, immunityLabel}) do
+	for _, child in ipairs({teamBadge, scoreLabel, phaseLabel, roundLabel, timerLabel, speedBuff, immunityLabel}) do
 	child.BackgroundTransparency = 1
 	child.TextTransparency = 1
 	local fade = TweenService:Create(child, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0.1, true), {TextTransparency = 0})
@@ -443,7 +306,6 @@ end
 -- Side panels slide-in
 leftSide.Position = UDim2.new(-0.2, 8, 0.5, -35)
 rightSide.Position = UDim2.new(1.2, -168, 0.5, -25)
-task.wait(0.3)
 local slideLeft = TweenService:Create(leftSide, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0, 8, 0.5, -35)})
 slideLeft:Play()
 local slideRight = TweenService:Create(rightSide, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(1, -168, 0.5, -25)})
@@ -469,4 +331,106 @@ local function pulseBanner(banner, textLabel, text, duration)
 	end)
 end
 
+-- Stamina pip row (bottom-center, under the health display position; lit count mirrors LocalPlayer "Stamina" attribute)
+local staminaPips = Instance.new("Frame")
+staminaPips.Name = "StaminaPips"
+staminaPips.AnchorPoint = Vector2.new(0.5, 1)
+staminaPips.Position = UDim2.new(0.5, 0, 1, -52)
+staminaPips.Size = UDim2.new(0, 180, 0, 6)
+staminaPips.BackgroundTransparency = 1
+staminaPips.Parent = hud
+
+local staminaLayout = Instance.new("UIListLayout")
+staminaLayout.FillDirection = Enum.FillDirection.Horizontal
+staminaLayout.Padding = UDim.new(0, 2)
+staminaLayout.SortOrder = Enum.SortOrder.LayoutOrder
+staminaLayout.Parent = staminaPips
+
+for i = 1, 12 do
+	local pip = Instance.new("Frame")
+	pip.Name = "Pip" .. i
+	pip.LayoutOrder = i
+	pip.Size = UDim2.new(0, 13, 0, 6)
+	pip.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+	pip.BackgroundTransparency = 0.85
+	pip.BorderSizePixel = 0
+	pip.Parent = staminaPips
+end
+
+-- Minimap: 2D projection (world X/Z -> map px), top-right; markers positioned/colored by HUDController
+local minimap = Instance.new("Frame")
+minimap.Name = "Minimap"
+minimap.AnchorPoint = Vector2.new(1, 0)
+minimap.Position = UDim2.new(1, -10, 0, 54)
+minimap.Size = UDim2.new(0, 150, 0, 150)
+minimap.BackgroundColor3 = Color3.fromRGB(10, 12, 16)
+minimap.BackgroundTransparency = 0.3
+minimap.BorderSizePixel = 0
+minimap.ClipsDescendants = true
+minimap.Parent = hud
+local mmStroke = Instance.new("UIStroke")
+mmStroke.Color = Color3.fromRGB(90, 100, 115)
+mmStroke.Thickness = 1
+mmStroke.Transparency = 0.35
+mmStroke.Parent = minimap
+
+local function makeMapMarker(name, letterText)
+	local marker = Instance.new("Frame")
+	marker.Name = name
+	marker.AnchorPoint = Vector2.new(0.5, 0.5)
+	marker.Size = UDim2.new(0, 12, 0, 12)
+	marker.Rotation = 45
+	marker.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
+	marker.BorderSizePixel = 0
+	marker.ZIndex = 2
+	marker.Parent = minimap
+	local letter = Instance.new("TextLabel")
+	letter.Name = "Letter"
+	letter.Size = UDim2.new(0, 10, 0, 8)
+	letter.Position = UDim2.new(0, -1, 0, 7)
+	letter.Rotation = -45
+	letter.BackgroundTransparency = 1
+	letter.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
+	letter.TextSize = 7
+	letter.TextColor3 = Color3.fromRGB(220, 220, 230)
+	letter.Text = letterText
+	letter.ZIndex = 2
+	letter.Parent = marker
+	return marker
+end
+makeMapMarker("MarkerJailA", "A")
+makeMapMarker("MarkerJailB", "B")
+makeMapMarker("MarkerSiteA", "A")
+makeMapMarker("MarkerSiteB", "B")
+
+local playerMarker = Instance.new("Frame")
+playerMarker.Name = "PlayerMarker"
+playerMarker.AnchorPoint = Vector2.new(0.5, 0.5)
+playerMarker.Size = UDim2.new(0, 12, 0, 12)
+playerMarker.BackgroundTransparency = 1
+playerMarker.ZIndex = 3
+playerMarker.Parent = minimap
+local playerDot = Instance.new("Frame")
+playerDot.Name = "Dot"
+playerDot.AnchorPoint = Vector2.new(0.5, 0.5)
+playerDot.Position = UDim2.new(0.5, 0, 0.5, 0)
+playerDot.Size = UDim2.new(0, 6, 0, 6)
+playerDot.BackgroundColor3 = Color3.new(1, 1, 1)
+playerDot.BorderSizePixel = 0
+playerDot.ZIndex = 3
+playerDot.Parent = playerMarker
+local dotCorner = Instance.new("UICorner")
+dotCorner.CornerRadius = UDim.new(1, 0)
+dotCorner.Parent = playerDot
+local playerNose = Instance.new("Frame")
+playerNose.Name = "Nose"
+playerNose.AnchorPoint = Vector2.new(0.5, 1)
+playerNose.Position = UDim2.new(0.5, 0, 0.15, 0)
+playerNose.Size = UDim2.new(0, 2, 0, 4)
+playerNose.BackgroundColor3 = Color3.new(1, 1, 1)
+playerNose.BorderSizePixel = 0
+playerNose.ZIndex = 3
+playerNose.Parent = playerMarker
+
 print("[BOPLUX_HUD] ScreenGui built with animations")
+

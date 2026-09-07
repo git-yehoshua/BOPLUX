@@ -9,18 +9,19 @@ local ObjectiveState = require(script.Parent.ObjectiveState)
 local MatchState = require(ServerScriptService.MatchManager.MatchState)
 local PlayerStateModule = require(ServerScriptService.PlayerState.PlayerStateModule)
 
+-- Must stay in sync with MapRuntime.MapBuilder SITE_LAYOUTS (no runtime math depends
+-- on this table; registration reads the map-provided Interior markers directly).
 local SITE_LAYOUT = {
 	{
 		id = "A",
-		center = Vector3.new(40, 4, -40),
+		center = Vector3.new(40, 2, -40),
 	},
 	{
 		id = "B",
-		center = Vector3.new(-40, 4, 40),
+		center = Vector3.new(-40, 2, 40),
 	},
 }
 
-local sitesModel
 local siteMarkers = {}
 
 local objectiveEvents = Instance.new("Folder")
@@ -100,62 +101,22 @@ local function updateSiteAttributes(siteId)
 	interior:SetAttribute("DetonationRemaining", ObjectiveState.detonationRemainingOf(siteId))
 end
 
-local function buildSites()
-	sitesModel = Instance.new("Folder")
-	sitesModel.Name = "Sites"
-	sitesModel.Parent = Workspace
-
+local function registerSitesFromMap()
+	local sites = Workspace:WaitForChild("Sites", 30)
+	if not sites then
+		warn("[ObjectiveSystem] MapRuntime did not provide Workspace.Sites within 30s - no sites registered")
+		return
+	end
 	local plantScale = script:GetAttribute("DebugPlantScale") or 1
 	local defuseScale = script:GetAttribute("DebugDefuseScale") or 1
 	local detonationScale = script:GetAttribute("DebugDetonationScale") or 1
-
-	local siteColor = Color3.fromRGB(90, 170, 220)
-
-	for _, layout in ipairs(SITE_LAYOUT) do
-		local id = layout.id
-		local center = layout.center
-
-		local model = Instance.new("Model")
-		model.Name = "Site_" .. id
-		model.Parent = sitesModel
-
-		local pad = Instance.new("Part")
-		pad.Name = "Pad"
-		pad.Anchored = true
-		pad.CanCollide = true
-		pad.Size = Vector3.new(6, 0.5, 6)
-		pad.CFrame = CFrame.new(center)
-		pad.Color = siteColor
-		pad.Material = Enum.Material.Slate
-		pad.Parent = model
-
-		local post = Instance.new("Part")
-		post.Name = "Beacon"
-		post.Anchored = true
-		post.CanCollide = true
-		post.Size = Vector3.new(0.5, 1.5, 0.5)
-		post.CFrame = CFrame.new(center + Vector3.new(0, 1.25, 0))
-		post.Color = siteColor
-		post.Material = Enum.Material.SmoothPlastic
-		post.Parent = model
-
-		local interior = Instance.new("Part")
-		interior.Name = "Interior"
-		interior.Anchored = true
-		interior.CanCollide = false
-		interior.Transparency = 1
-		interior.Size = Vector3.new(4, 4, 4)
-		interior.CFrame = CFrame.new(center)
-		interior:SetAttribute("SiteId", id)
-		interior:SetAttribute("Planted", false)
-		interior:SetAttribute("ChannelKind", nil)
-		interior:SetAttribute("PlantProgress", 0)
-		interior:SetAttribute("DefuseProgress", 0)
-		interior:SetAttribute("DetonationRemaining", 0)
-		interior.Parent = model
-
-		siteMarkers[id] = interior
-		ObjectiveState.registerSite(id, center, ObjectiveConfig.PlantSeconds * plantScale, ObjectiveConfig.DefuseSeconds * defuseScale, ObjectiveConfig.DetonationSeconds * detonationScale)
+	for _, model in ipairs(sites:GetChildren()) do
+		local interior = model:FindFirstChild("Interior")
+		local siteId = interior and interior:GetAttribute("SiteId")
+		if interior and siteId then
+			siteMarkers[siteId] = interior
+			ObjectiveState.registerSite(siteId, interior.Position, ObjectiveConfig.PlantSeconds * plantScale, ObjectiveConfig.DefuseSeconds * defuseScale, ObjectiveConfig.DetonationSeconds * detonationScale)
+		end
 	end
 end
 
@@ -309,7 +270,7 @@ local function wireRemotes()
 		end
 		if command == "plant" then
 			local id = siteId or ObjectiveState.siteIds()[1]
-			if phaseOf() == MatchState.PHASE.Live and ObjectiveState.hasSite(id) and not ObjectiveState.isPlanted(id) then
+			if ObjectiveState.hasSite(id) and not ObjectiveState.isPlanted(id) then
 				if ObjectiveState.markPlanted(id, player) then
 					local state = MatchState.liveState()
 					if state then
@@ -320,7 +281,7 @@ local function wireRemotes()
 			end
 		elseif command == "defuse" then
 			local id = siteId or ObjectiveState.siteIds()[1]
-			if phaseOf() == MatchState.PHASE.Live and ObjectiveState.hasSite(id) and ObjectiveState.isPlanted(id) and not PlayerStateModule.isJailed(player) then
+			if ObjectiveState.hasSite(id) and ObjectiveState.isPlanted(id) and not PlayerStateModule.isJailed(player) then
 				local root = rootPartFor(player)
 				if root then
 					ObjectiveState.startChannel(id, "defuse", player, root.Position)
@@ -386,7 +347,7 @@ Players.PlayerRemoving:Connect(function(player)
 	end
 end)
 
-buildSites()
+registerSitesFromMap()
 wireRemotes()
 wireMatchEvents()
 

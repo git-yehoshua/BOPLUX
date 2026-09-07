@@ -240,15 +240,21 @@ local function wireRemotes()
 		matchSystems.Parent = ReplicatedStorage
 	end
 
-	requestSabotage = Instance.new("RemoteEvent")
-	requestSabotage.Name = "RequestSabotage"
-	requestSabotage.Parent = matchSystems
+	requestSabotage = matchSystems:FindFirstChild("RequestSabotage")
+	if not requestSabotage then
+		requestSabotage = Instance.new("RemoteEvent")
+		requestSabotage.Name = "RequestSabotage"
+		requestSabotage.Parent = matchSystems
+	end
 
 	requestSabotage.OnServerEvent:Connect(handleRequest)
 
-	local sabotageDebug = Instance.new("RemoteEvent")
-	sabotageDebug.Name = "SabotageDebug"
-	sabotageDebug.Parent = matchSystems
+	local sabotageDebug = matchSystems:FindFirstChild("SabotageDebug")
+	if not sabotageDebug then
+		sabotageDebug = Instance.new("RemoteEvent")
+		sabotageDebug.Name = "SabotageDebug"
+		sabotageDebug.Parent = matchSystems
+	end
 
 	sabotageDebug.OnServerEvent:Connect(handleDebug)
 end

@@ -10,7 +10,6 @@ local function playCue(payload)
 	sound.Volume = 1
 	sound.RollOffMaxDistance = 100
 	sound.RollOffMode = Enum.RollOffMode.InverseTapered
-	sound.DopplerMode = Enum.DopplerMode.Off
 	sound.EmitterSize = 1
 
 	local attachment = Instance.new("Part")

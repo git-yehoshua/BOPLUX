@@ -37,7 +37,7 @@ if matchSystems then
 	if warning then
 		warning.OnClientEvent:Connect(function(payload)
 			if payload and payload.text then
-				showWarning("[Warning] " .. payload.text)
+				showWarning(payload.text, payload.duration)
 			end
 		end)
 	end
@@ -46,7 +46,7 @@ if matchSystems then
 	if role then
 		role.OnClientEvent:Connect(function(payload)
 			if payload and payload.objective then
-				showWarning("[Secret Objective] " .. tostring(payload.objective.text), 8)
+				showWarning(payload.objective.text, 8)
 			end
 		end)
 	end
@@ -56,10 +56,10 @@ if matchSystems then
 		reveal.OnClientEvent:Connect(function(payload)
 			if not payload then return end
 			if not payload.userId then
-				showReveal("[Round Over] No Impostor was active this round.", 5)
+				showReveal("No Impostor was active this round.", 5)
 			else
 				local outcome = payload.impostorWon and " - the Impostor won!" or " - the Impostor lost."
-				showReveal("[Round Over] " .. tostring(payload.displayName) .. " was the Impostor" .. outcome, 5)
+				showReveal(tostring(payload.displayName) .. " was the Impostor" .. outcome, 5)
 			end
 		end)
 	end
