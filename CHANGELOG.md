@@ -2,6 +2,28 @@
 
 All notable changes to BOPLUX are recorded here in non-technical, outcome-based language.
 
+## [0.1.17] - 2026-09-08
+
+### Added
+
+- **The courtyard map got its first real layout pass (Courtyard_v002)**: a central landmark block now breaks the long spawn-to-spawn sightline through the middle; the lane walls form a full cross with two mid gates, giving attackers and defenders readable lanes between the halves; each plant site gained hard cover (walls plus a low planter) so planting and post-plant defense are not out in the open; the outer ring and mid yards got scattered crates and cover so rotating across the map is no longer a naked walk; the two halves are subtly tinted warm/cool so players can tell whose side they are on. The map stays exactly 180-degree rotationally symmetric (fair when sides swap at halftime), and all gameplay anchor points — jails, sites, spawn rooms — kept their coordinates, so the minimap and all systems keep working unchanged.
+- **Jail-camping pressure is visible again**: the amber ring around each Jail diamond on the minimap now thickens while an enemy camps outside an occupied jail (the meter lost its on-screen bars when the old side panels were removed). Verified live: ring appears, scales with pressure, disappears when it clears.
+
+### Changed
+
+- Maps are now versioned content: the new layout ships as `Courtyard_v002` (contract version 2) alongside the original `Courtyard_v001`, which is kept as a rollback template.
+
+## [0.1.16] - 2026-09-08
+
+### Fixed
+
+- **Sound cues can be heard again (regression fix)**: the saved game file still contained an old copy of the audio player that crashed before playing any sound — every warning ping and impostor tell died silently. The up-to-date audio player has been put back in place and verified: a full jail-breakout now plays its warning cues end to end with no errors.
+
+### Verified (no gameplay changes)
+
+- **The round loop now has live end-to-end evidence**: breakout hold progress, a Defender defuse that ends the round in a Defender win, and an Attacker plant that detonates for an Attacker win were all driven through the real client-server routes in a live session and confirmed by the round evidence feed. Also verified live: breaking out of jail after a full 45-second hold frees the player, moving cancels a hold-in-progress, the jail keeps prisoners frozen in place, the impostor's sabotage obeys its range limit, **a Defender's jail-side reset actually resets a breakout in progress, and a teammate's rescue channel runs to completion at the jail door**. (A tooling issue in the assistant's inspection channel briefly made three working systems look broken — root-caused as an isolation quirk of the inspection tool, not game bugs; nothing in the game was changed.)
+- A tooling note was recorded (REC-0014) so future verification sessions trust the evidence feed instead of the isolated inspection reads, and don't rely on synthetic keyboard presses.
+
 ## [0.1.15] - 2026-09-06
 
 ### Added

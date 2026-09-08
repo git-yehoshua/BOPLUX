@@ -240,6 +240,21 @@ local function showReveal(text, duration)
 	end)
 end
 
+-- Jail camping pressure (REC-0013): the server writes CampingMeterFill (0..1) on each
+-- jail Interior; the amber ring thickness on the minimap marker scales with it.
+local function updateCampingRing(marker, interior)
+	if not marker then return end
+	local ring = marker:FindFirstChild("CampingRing")
+	if not ring then return end
+	local fill = interior and interior:GetAttribute("CampingMeterFill") or 0
+	if fill > 0.02 then
+		ring.Enabled = true
+		ring.Thickness = 1 + fill * 3
+	else
+		ring.Enabled = false
+	end
+end
+
 local function updateJailStatus()
 	local jailsFolder = Workspace:FindFirstChild("Jails")
 	if not jailsFolder then
@@ -255,6 +270,7 @@ local function updateJailStatus()
 			local countA = intA:GetAttribute("JailOccupantCount") or 0
 			placeMarker(markerJailA, intA.Position)
 			setKind(markerJailA, countA > 0 and "active" or "clear")
+			updateCampingRing(markerJailA, intA)
 		end
 	end
 	if cellB then
@@ -263,6 +279,7 @@ local function updateJailStatus()
 			local countB = intB:GetAttribute("JailOccupantCount") or 0
 			placeMarker(markerJailB, intB.Position)
 			setKind(markerJailB, countB > 0 and "active" or "clear")
+			updateCampingRing(markerJailB, intB)
 		end
 	end
 end

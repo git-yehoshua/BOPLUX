@@ -384,6 +384,16 @@ local function makeMapMarker(name, letterText)
 	marker.BorderSizePixel = 0
 	marker.ZIndex = 2
 	marker.Parent = minimap
+	-- Camping-pressure ring (REC-0013): amber stroke on jail markers, driven by
+	-- HUDController from the server CampingMeterFill attribute. Hidden by default;
+	-- thickness scales 0..3px with fill, so camping pressure is visible on the map.
+	local ring = Instance.new("UIStroke")
+	ring.Name = "CampingRing"
+	ring.Color = Color3.fromRGB(255, 140, 50)
+	ring.Thickness = 0
+	ring.Transparency = 0.15
+	ring.Enabled = false
+	ring.Parent = marker
 	local letter = Instance.new("TextLabel")
 	letter.Name = "Letter"
 	letter.Size = UDim2.new(0, 10, 0, 8)

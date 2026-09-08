@@ -2,9 +2,52 @@
 
 ## Task Summary
 
-- Status: **DONE — Jails/Objectives panels restyled with the SunGraphica "FREE Sci-Fi UI" kit (angled tactical 9-slice panels + header icons + accent lines); logic layer untouched**
-- Task mode: meaningful feature (visual/UX polish slice) — AI-agent delivery
-- User request: source a free/low-cost military/tactical Roblox UI kit, import it end-to-end without owner manual work, and rebuild the Jails/Objectives panel visuals with angled kit panels (red Jails / blue Objectives) + lock/target icons, leaving HUDStatusTypes/ServerHUDState/ServerHUDInit/RemoteEvent logic untouched.
+- Status: **DONE — 2026-09-08 verification pass complete: breakout/defuse/plant round outcomes verified end-to-end via real client-server routes; the 3 suspected bugs from earlier in the session were proven to be tooling measurement artifacts (no game bugs); REC-0014 added; REC-0004/0005 still hold the 2-player-gated paths**
+- Task mode: bug-fix investigation → verification (code-discovery flow) — AI-agent delivery
+- User request: root-cause the 3 suspected bugs "properly", then complete the verification pass the owner started
+
+## What Was Found (root cause, evidence-backed)
+
+- **Suspect #1 "jail cells never register"** — RETRACTED. Evidence: canary test — a cell registered via agent-context `require()` appeared ONLY in the agent's module copy while PassEvidence (real script) kept iterating real JailA/JailB from session start. `execute_luau` `require()` returns an isolated module instance per execution.
+- **Suspect #2 "MatchDebug remote no-op"** — RETRACTED. Same isolation cause: success was checked via the isolated `JailState` copy. When re-checked via the PassEvidence mirror, MatchDebug jail worked first try (`jailed=true occ=1`).
+- **Suspect #3 "stale/drifted script copies (phantom line numbers)"** — RETRACTED. The line drift (435 vs 480) was the agent's own blank-line-skipping line counter; running `.Source` is the canonical source.
+- Net: **zero game-code changes**. Tooling rules captured in REC-0014 (trust PassEvidence mirror / console / client-context reads; never trust require()-read module state; synthetic keyboard doesn't reach UserInputService — use Client-datatype FireServer).
+
+## Verification Matrix (2026-09-08, live, evidence = PassEvidence StringValue)
+
+| Path | Route | Result |
+|---|---|---|
+| Jail via MatchDebug | real remote | `jailed=true`, `occ=1`, teleport into Cell A |
+| Breakout channel | RequestBreakoutHold (real remote) | `channel=breakout progress` 0→22+; MoveCancelRange validation ran (no false cancel) |
+| Round-end cleanup | automatic | channel canceled + `resetRound` on phase change (`jailed=false occ=0` at next Live) |
+| Defuse → Defender win | RequestDefuseHold (real remote, Defender at planted Site A) | 7s channel → round outcome `defused` → MatchEnd |
+| Plant → detonation → Attacker win | RequestPlantHold (real remote, Attacker on Site A) | 5s channel → `planted=true` det 45→0 → round won, PreRound r3 |
+| Timer supersede | ObjectiveDebug plant path | detonation countdown keeps round alive past 180s |
+
+Not coverable with 1 real player (remain with REC-0004/0005): real LMB capture on a victim, RMB jail-reset on a live breakout, teammate rescue freeing occupants, camping meter under a real Defender, impostor sabotage via F.
+
+## Changelog Plan
+
+- Meaningful change introduced: YES (verification evidence, no behavior change)
+- CHANGELOG.md updated: YES — 0.1.16 ("Verified, no gameplay changes")
+- Version affected: 0.1.16 (pre-release)
+- Minor/major recommendation: NO
+
+## README Plan
+
+- README.md updated: NO — no front-door change
+- Docs routing needed: NO
+- README validation status: not run (no README change)
+
+## Close-Out Notes
+
+- Truth Alignment Status: GREEN — code unchanged; workspace/governance updated to reflect what is (and is not) verified.
+- Drift Result: none — no canonical truth change; verification tier status refined in project-truth-summary.
+- Recommendations: REC-0014 added (MCP verification traps); REC-0003 remains relevant.
+- Retrospective: the agent nearly shipped 3 false bug reports before switching to ground-truth evidence channels — keep the "trust the system's own evidence output, not your require()" rule for every future session.
+- Natural next prompt: "Run the 2-player verification pass" (owner plays both clients; REC-0004/0005 checklist in the jail/objective tickets), or "Close out release-prep items".
+
+## Historical: SunGraphica HUD restyle task (DONE — see follow-ups below)
 
 ## Kit Choice (and why)
 
@@ -94,3 +137,37 @@
 - BottomNotify: AnchorPoint (0.5,0), Position (0.5,0,0.16,0) — owner-specified, verified live.
 - Sound audit: pipeline EXISTS (AudioConfig/RunAudioSystem/CuePlayer), plays engine placeholder ping only; real assets never uploaded (REC-0006). Report-only, no changes.
 - Changelog 0.1.15. Screenshot ScreenCapture_MinimapRound_1.
+
+## Follow-up 2026-09-08: Verification pass — 1-player MCP-driven, real remote routes (DONE)
+
+- Owner ran a 2-player Clients-and-Servers session first; those windows are unreachable by the MCP bridge (never appear in `list_roblox_studios`), so verification was done in the MCP-visible main window with 1 real player + debug remotes (real client→remote→server route, debug only removes role/state gating per system's own design).
+- **Tooling root-cause (major finding, 3 earlier "bugs" retracted)**: MCP `execute_luau` `require()` returns an ISOLATED module instance per command execution — `JailState.cellIds()`, `MatchState.liveState()`, attribute reads through fresh requires, and MatchDebug "no-ops" were all measurement artifacts. Ground-truth channels are (a) `PassEvidence` StringValue mirror (updated by the real script's Heartbeat), (b) console prints, (c) client-datatype reads. Phantom line numbers (err at "line 224/228" in shorter files) were the assistant reading `.Source` with a line-splitter that skipped blank lines — the running source IS the repo source (480 vs 435 was the same cause). No game-code changes were needed; REC-0003 already documented the isolation half of this.
+- **Verified live via real remote routes (evidence = PassEvidence mirror)**: breakout channel `progress` 0→22+ (canceled by round end; resetRound cleanup confirmed); debug-jail → `jailed=true occ=1` at Cell A; real-route defuse hold at Site A → `Defenders win` round outcome → MatchEnd; real-route plant (5s) → `planted=true` + detonation countdown 45→0 → round 3 PreRound with round-2 win recorded; PlantDebug `plant` also confirmed `supersedeRoundTimer` behavior.
+- **Synthetic keyboard gap**: `user_keyboard_input` keyDown/keyPress did NOT trigger `UserInputService.InputBegan` in this Play window (no channel started despite correct jail state) — direct `RemoteEvent:FireServer` from the Client datamodel works. MCP-driven input cannot substitute for real keypresses; flagged in REC-0014.
+- Not testable with 1 real player (unchanged, still gated by REC-0004/0005): real Defender-on-Attacker LMB capture, RMB jail-reset on a live breakout, teammate rescue freeing an occupant, camping meter fill (needs real Defender within 6m), impostor sabotage through the real F route.
+- Changelog 0.1.16. No screenshots (state evidence captured via PassEvidence mirror readings in-session).
+
+## Follow-up 2026-09-08 #2: Automated play test — auto-moved player, new coverage, REAL defect fixed (DONE)
+
+- **Real defect found & fixed**: datamodel `CuePlayer` was the pre-0.1.11 copy (DopplerMode crash) — the place file had silently regressed audio cues (repo mirror was already fixed). Synced the source; verified in a fresh session: full 45s breakout with warning cues + tell, console clean, zero crashes. Other runtime HUD scripts spot-checked against repo markers — current.
+- **New verifications (real routes, PassEvidence evidence)**: breakout move-cancel (2m shift → cancel); WalkSpeed-0 jail enforcement; **full 45s breakout run → auto-release** (twice); sabotage range-gating negative case (4.71m > 3m → ignored); impostor selection via debug + objective; halftime role swap; SabotageRange/SiteRange config matches behavior.
+- **Not completed**: RequestJailReset real-route fingerprint test (startPos=nil survival) — rounds rolled over mid-test each attempt; gates are individually verified + unit-tested; deferred to the 2-player pass (REC-0004).
+- Changelog 0.1.16 wording extended; REC-0003 (Script Sync hardening) re-flagged by the CuePlayer regression evidence.
+
+## Follow-up 2026-09-08 #3: Extended automated pass — reset + rescue routes verified (DONE)
+
+- **RMB jail-reset VERIFIED** via differential fingerprint: reset channel survived a 1.5m displacement (startPos=nil disables move-cancel — only explanation for survival); control channel without reset died on 1.6m shift. Round-4 Defender half, real remote routes.
+- **Rescue channel VERIFIED**: full 3s run captured at 10Hz sampling (0.08→2.98→complete), real `RequestRescue` route, door-zone placement. Empty-cell rescue completes cleanly; freeing a real teammate stays 2-player.
+- **Camping meter**: deferred — genuinely needs 2 real players (camper scan excludes jailed players; occupants must be real Player objects). REC-0004.
+- **Method recorded**: 10Hz evidence sampler (task.spawn → attribute buffer) for sub-5s channel windows; fast-forward via the real `RoundOutcomeReported` bindable to reach Defender rounds.
+
+## Task 2026-09-08 #4 (owner-directed, overnight): bug-fix + re-test + map design pass (DONE)
+
+- Owner directive: fix found issues, re-test, then improve the map; "I'm confirming every recommended decisions you come up to."
+- **Fix 1 — REC-0013 (camping visibility)**: amber `CampingRing` UIStroke on minimap Jail markers, driven from the server `CampingMeterFill` attribute by `updateCampingRing` (thickness 1+fill×3px, hidden at ~0). Live wiring test: fill 0.6 → on @2.8px; 0 → off. Meter logic untouched.
+- **Map design pass — `Courtyard_v002`** (contract v2, v001 retained as rollback): central monolith + pillars (breaks spawn-spawn diagonal), lane cross with mid gates, per-site L-cover + low planter walls, spawn exit screens, yard/ring crates + low walls, warm/cool half tints. Strict 180° rotational symmetry preserved (team fairness); footprint/jails/sites/spawns coordinates unchanged → minimap, CELL_LAYOUT, SPAWN_POINTS all valid with zero gameplay-code changes. Full source in `MapBuilder.luau` (repo) synced to datamodel.
+- **Re-test results (fresh session)**: v002 activates + contract registers (2 jails/2 sites, positions identical); symmetry audit 0 mismatches (41 children); real-route plant on Site A → planted → detonation → Attackers win (client score 1-0); minimap markers correct px positions; camping ring wiring verified; console clean.
+- **Deferred (unchanged)**: 2-player-gated items (REC-0004/0005); camping meter gameplay under real play.
+- Changelog 0.1.17; REC-0013 → Done; project-truth map line updated to v002-active.
+- Screenshot `ScreenCapture_MapV002_Top` captured for owner morning review (agent cannot view images — owner eyes required).
+- Natural next prompt: review the v002 map screenshot + in-person walk, then the 2-player pass on the new layout.
