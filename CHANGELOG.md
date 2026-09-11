@@ -2,6 +2,108 @@
 
 All notable changes to BOPLUX are recorded here in non-technical, outcome-based language.
 
+## [0.1.27] - 2026-09-11
+
+### Added
+
+- **Crouch (hold C)**: the missing GDD movement action — hold C to move low and slow (camera dips with you), release to stand. Sprint is suppressed while crouched, and it clears on jail/round reset like everything else.
+- **Crosshair hit feedback**: captures flash the crosshair red, starting a plant flashes it blue — instant confirmation your action registered.
+
+### Changed
+
+- **Crosshair is actually visible now**: bigger dot with a dark outline, thicker ring. (It technically existed before but was a 4-pixel speck most players never noticed.)
+- **Map cleanup**: the full map was audited part by part — floating awning poles now reach the ground, spawn-room lamps touch the ceiling, and the audit confirmed everything else is attached as designed (no junk, no leftovers).
+
+### Not added (deliberate)
+
+- **Weapons**: the design spec mandates touch-based capture and explicitly forbids a bomb item — there are no guns *by design*, not by omission. Visible hands holding gear remain an open visual task (tried three approaches; composing them blind kept producing clutter, so this one waits for a session with live visual feedback).
+
+## [0.1.26] - 2026-09-10
+
+### Added
+
+- **A real crosshair**: the game finally has a center crosshair — a dot with a ring around it that reacts to the world. It turns red and widens near an enemy (capture range), amber near a jail, and blue near a plant site.
+- **Contextual control hints**: under the crosshair, the game now tells you what you can do right here — "HOLD LMB — Plant" at a site, "HOLD E — Defuse" on a planted spike (defenders), "E Rescue · RMB Reset" at a jail, "HOLD F — Breakout" while jailed, "LMB — Capture" near an enemy. No more guessing buttons.
+- **Spike urgency on the timer**: while a spike is planted, the top-bar timer switches to the detonation countdown in red (blinking under 10 seconds), and a banner announces the plant with team-appropriate instructions ("defuse it" vs "defend it").
+
+### Removed
+
+- **All integrated 3D props (owner-directed)**: the dressed asset models kept rendering as glitchy checkered boxes on the owner's screen through every fix attempt (including a full importer rewrite with proven geometry). The map is back to clean structural art, which reads correctly everywhere. The asset files stay archived in the project if a textured pass is ever retried with visual verification.
+
+## [0.1.25] - 2026-09-10
+
+### Fixed
+
+- **The real reason props looked like checkered/glitchy boxes**: the 3D importer was mirroring every model inside-out (proven by measuring the models' geometry: they came out backwards). Both lighting modes glitched different ways, which is why nothing ever looked right. The importer now rotates models correctly instead of mirroring them, and the whole 264-model library was rebuilt — boxes, plants, walls and furniture all render as proper 3D with correct shading.
+- **Confirmed the flat colors must stay (for now)**: an experiment placed a fully textured wall in the live map — it rendered flat gray. The kits' textures are designed as repeating tiles but the engine smears them instead of repeating, so textured props would look worse, not better. The flat Kenney colors remain the right call; restoring real textures would need a texture-coordinate rebuild first.
+
+## [0.1.24] - 2026-09-10
+
+### Added
+
+- **Real props from the licensed 3D library (Tulay v003)**: the map's confusing placeholder shapes were replaced with actual modeled props — real bunk-adjacent cell furnishings (trash can, wall lamp), a proper dumpster with crates, plants and a tree at each plant site, pallets and cargo boxes in the yards and on the docks, benches, shrubs, real street-wall modules clothing the big sightline screens, and fully furnished spawn rooms (bookcases, benches, rugs, floor lamps, plants, door awnings). Everything decorative still has no collision, and the map stays exactly team-symmetric (audited: 0 mismatches across 731 parts).
+- **Spawn rooms are lit at night**: each spawn room now has its own ceiling lamp, so night matches never start you in a pitch-black box.
+
+### Fixed
+
+- **Flashlight now lights up close walls**: the beam used to start from inside your head, so anything nearer than that stayed dark and your own head shadowed the beam. The light now shines from just in front of your face — hugging a wall at night actually reveals it.
+- **Fiesta flags fly higher**: the banderita strings moved from head height to well above it (rope at 8+ studs), so they decorate the bridges and lanes without blocking your view.
+
+## [0.1.23] - 2026-09-10
+
+### Added
+
+- **The map got its art pass (Tulay v002, "Estero canal-town")**: the jail is now a real cell — iron bars with a barred gate, bunk bed, wall bench, toilet and sink, floor drain, a caged ceiling lamp that actually glows at night, and a CELL A/B sign over the gate. The canal-side is dressed Filipino-style: fiesta banderitas strung across the bridges and lanes, moored outrigger boats, water-level docks with bollards, bank lamp posts, string lights, market stalls, and reed clusters. Behind the perimeter walls, terracotta-roofed building silhouettes with window bands give the skyline depth. Gate towers grew tiered roofs and team banners; plant sites sit on stone plinths with painted capture rings, sandbags and corner bollards.
+- **Night lighting now comes from the map itself**: the jail cell bulbs, bank lamp posts and string-light bulbs are real light sources after dark (the existing Day/Night system picks them up automatically), while beacons keep their blue glow.
+- **Everything decorative stays non-collidable** — cover, movement and all gameplay rules are identical to the verified layout, and the strict 180-degree team-fairness symmetry was re-audited (0 mismatches across 601 parts).
+
+## [0.1.22] - 2026-09-10
+
+### Added
+
+- **Day & Night matches**: every match now rolls once between a bright day and a dark night (50/50). Night brings a cold, foggy sky, glowing blue beacons on both plant sites, and warm lamps inside the jails so objectives stay findable. The top bar shows a DAY/NIGHT badge so everyone knows the conditions.
+- **Flashlight (night only)**: players toggle a head-mounted beam with **L**. The beam points where you face and — importantly — every other player can see your light, so lighting up is a real risk/reward choice. It runs on a battery (about 50 seconds of continuous use, recharges in about 20 while off) shown as amber pips above the stamina row; it auto-cuts at empty and re-enables once recharged, and resets each round.
+
+### Changed
+
+- **Fresh start: the game was rebuilt from source (BOPLUX.rbxl)**: the old place file (formerly `template.rbxl`) was retired. The new place is populated entirely from the project's script repository, making the repository the single source of truth — this permanently prevents the stale-copy bugs that caused past regressions (a dead audio-cue copy and a HUD that silently diverged).
+- **New map: Tulay (v001)**: a completely new canal-city arena replacing Courtyard. An east–west canal splits the map, crossed by three bridges (a mid bridge flanked by a gate-tower plaza, plus two ring bridges). Plant sites are colonnade compounds on opposite banks; canal-bank parapets leave clean gaps at each bridge. All gameplay anchors (spawns, jails, sites, map size, fairness symmetry) are unchanged, so rounds play by the same rules — the layout is what's new.
+
+### Fixed
+
+- **Two latent bugs the rebuild flushed out**: the match-state remote was created but never connected (would break the HUD timer/score feed in a from-scratch place), and the HUD builder still contained a dead reference to long-removed side panels that crashed it mid-build (would leave the HUD missing its stamina, battery, and minimap sections). Both fixed in source and verified live.
+
+## [0.1.21] - 2026-09-09
+
+### Fixed
+
+- **The courtyard walls finally look like buildings**: the decorative wall layer was only one block high and covered half of each wall, so it read as a curb against tall grey concrete. Every outer wall is now dressed end to end and three stories high (solid base, window band, solid crown) — about 350 decorative pieces total, still with no effect on movement or cover.
+- **Confirmed your Asset Manager images are working**: the wall and surface textures were investigated pixel by pixel — the uploads are correct and they do load in-game. The pale/checkered look is the kit's own light style at large scale, not missing content. (A richer art-direction pass is a possible follow-up.)
+
+## [0.1.20] - 2026-09-09
+
+### Fixed
+
+- **Map decorations were sunk halfway into the ground**: every decorative prop on the courtyard (building walls, landmark cladding, crates, trees) was placed as if its base were at its center, so walls sat buried to half their height and the map read as bare grey concrete. Props now sit exactly on the surface they belong on — walls stand full height, stacked crates rest on top of each other. Round behavior is unchanged (decorations still have no collision). Note: the retro-urban walls may still show a temporary checkerboard pattern until their surface textures are re-verified.
+
+## [0.1.19] - 2026-09-09
+
+### Fixed
+
+- **The top bar was secretly empty**: the intro fade animation on the team/score/phase labels was set to play forward and then reverse, so every label faded straight back to invisible — the bar has been a blank black slab since the animation shipped. Labels now fade in and stay visible.
+- **Slimmed the top bar and minimap**: the full-width bar lost its rounded corners (which made it read as a floating slab), dropped from 44 to 36 pixels with a lighter background, and the minimap shrank from 150 to 112 pixels with a more transparent background. All marker positions and camping-ring behavior unchanged.
+
+## [0.1.18] - 2026-09-09
+
+### Added
+
+- **The map is dressed (Courtyard_v003)**: the courtyard no longer looks like a greybox. A licensed CC0 prop library (Kenney's furniture and retro-urban kits — 204 models, no attribution required) now furnishes the map: the perimeter reads as real buildings with textured wall modules, the central landmark got wall cladding, columns and awnings over the mid gates, each plant site gained site-appropriate props (dumpsters, crates, planters, trees), the jails have benches and wall lamps inside, the spawn rooms got bookcases, rugs and lighting, and grass patches break up the concrete. Every prop is strictly decorative — it does not add collision — so round behavior, cover, and movement are identical to the verified v002 layout, and the map remains exactly 180-degree rotationally symmetric (audit: 0 mismatches across 214 props).
+- **A reusable asset pipeline now exists**: imported the CC0 library through a scripted builder (exact Kenney colors extracted from the kit files; the retro-urban texture look reproduced with the kit's own texture pages uploaded as Roblox assets). The library lives in `ServerStorage.AssetLibrary`, ready to dress future maps with zero manual importing.
+
+### Verified
+
+- Full round loop re-verified live on the dressed map: attacker plant on Site A (5s channel through the real client-server route) → 45s detonation → attacker win (score progressed 2-1 across rounds 2-3) → halftime role swap at round 4. Console clean, contract anchors (jails, sites, spawns) registered at their unchanged coordinates.
+
 ## [0.1.17] - 2026-09-08
 
 ### Added

@@ -90,6 +90,13 @@ local requestSprint = Instance.new("RemoteEvent")
 requestSprint.Name = "RequestSprint"
 requestSprint.Parent = matchSystems
 
+local requestCrouch = matchSystems:FindFirstChild("RequestCrouch")
+if not requestCrouch then
+	requestCrouch = Instance.new("RemoteEvent")
+	requestCrouch.Name = "RequestCrouch"
+	requestCrouch.Parent = matchSystems
+end
+
 local playerStateSync = matchSystems:FindFirstChild("PlayerStateSync")
 if not playerStateSync then
 	playerStateSync = Instance.new("RemoteEvent")
@@ -108,6 +115,10 @@ requestSprint.OnServerEvent:Connect(function(player, wanted)
 	end
 	lastToggle[player] = now
 	PlayerStateModule.requestSprint(player, wanted == true)
+end)
+
+requestCrouch.OnServerEvent:Connect(function(player, wanted)
+	PlayerStateModule.requestCrouch(player, wanted == true)
 end)
 
 local function firePlayerSync(player)

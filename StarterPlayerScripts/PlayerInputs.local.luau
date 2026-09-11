@@ -26,10 +26,28 @@ local requestDefuseRelease = matchSystems:WaitForChild("RequestDefuseRelease", 1
 local requestBreakoutHold = matchSystems:WaitForChild("RequestBreakoutHold", 10)
 local requestBreakoutRelease = matchSystems:WaitForChild("RequestBreakoutRelease", 10)
 local requestSprint = matchSystems:WaitForChild("RequestSprint", 10)
+local requestCrouch = matchSystems:WaitForChild("RequestCrouch", 10)
+local requestFlashlight = matchSystems:WaitForChild("RequestFlashlight", 10)
 local requestSabotage = matchSystems:FindFirstChild("RequestSabotage")
 
 local E = Enum.KeyCode.E
 local F = Enum.KeyCode.F
+local L = Enum.KeyCode.L
+local C = Enum.KeyCode.C
+
+-- GDD §3.2 crouch: hold C to move low and slow (server sets WalkSpeed 8);
+-- the camera dips with it. Offset resets on respawn.
+local CROUCH_CAMERA_DIP = Vector3.new(0, -1.2, 0)
+local function setCrouchVisual(crouching)
+	local character = player.Character
+	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+	if humanoid then
+		humanoid.CameraOffset = crouching and CROUCH_CAMERA_DIP or Vector3.new(0, 0, 0)
+	end
+end
+player.CharacterAdded:Connect(function()
+	setCrouchVisual(false)
+end)
 
 local function nearestMarkerId(folderName)
 	-- nearest Jail/Site interior id; server re-validates exact range/team/state
@@ -109,6 +127,16 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 		if requestSabotage then
 			requestSabotage:FireServer()
 		end
+	elseif input.KeyCode == Enum.KeyCode.L then
+		-- Night-mode flashlight toggle. Server rejects in day mode / empty battery.
+		if requestFlashlight then
+			requestFlashlight:FireServer()
+		end
+	elseif input.KeyCode == C then
+		if requestCrouch then
+			requestCrouch:FireServer(true)
+		end
+		setCrouchVisual(true)
 	elseif input.KeyCode == Enum.KeyCode.LeftShift then
 		requestSprint:FireServer(true)
 	end
@@ -121,9 +149,14 @@ UserInputService.InputEnded:Connect(function(input, gameProcessed)
 		requestDefuseRelease:FireServer()
 	elseif input.KeyCode == F then
 		requestBreakoutRelease:FireServer()
+	elseif input.KeyCode == C then
+		if requestCrouch then
+			requestCrouch:FireServer(false)
+		end
+		setCrouchVisual(false)
 	elseif input.KeyCode == Enum.KeyCode.LeftShift then
 		requestSprint:FireServer(false)
 	end
 end)
 
-print("[PlayerInputs] Bound: LMB capture/plant-hold | RMB jail-reset | E rescue/defuse-hold | F breakout-hold/sabotage | Shift sprint")
+print("[PlayerInputs] Bound: LMB capture/plant-hold | RMB jail-reset | E rescue/defuse-hold | F breakout-hold/sabotage | Shift sprint | L flashlight | C crouch (hold)")

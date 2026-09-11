@@ -63,17 +63,18 @@ hud.Parent = PlayerGui
 
 local topBar = Instance.new("Frame")
 topBar.Name = "TopBar"
-topBar.Size = UDim2.new(1, 0, 0, 44)
+topBar.Size = UDim2.new(1, 0, 0, 36)
 topBar.Position = UDim2.new(0, 0, 0, 0)
 topBar.BackgroundColor3 = darkBg
-topBar.BackgroundTransparency = 0.25
+topBar.BackgroundTransparency = 0.4
 topBar.BorderSizePixel = 0
 topBar.Parent = hud
+-- No rounded corners: a full-bleed bar with UICorner reads as a floating slab
 
 local teamBadge = Instance.new("TextLabel")
 teamBadge.Name = "TeamBadge"
 teamBadge.Size = UDim2.new(0, 80, 0, 18)
-teamBadge.Position = UDim2.new(0, 12, 0, 4)
+teamBadge.Position = UDim2.new(0, 12, 0, 2)
 teamBadge.BackgroundTransparency = 1
 teamBadge.FontFace = font
 teamBadge.TextSize = 14
@@ -88,7 +89,7 @@ teamBadge.Parent = topBar
 local scoreLabel = Instance.new("TextLabel")
 scoreLabel.Name = "Score"
 scoreLabel.Size = UDim2.new(0, 80, 0, 16)
-scoreLabel.Position = UDim2.new(0, 12, 0, 24)
+scoreLabel.Position = UDim2.new(0, 12, 0, 18)
 scoreLabel.BackgroundTransparency = 1
 scoreLabel.FontFace = font
 scoreLabel.TextSize = 13
@@ -118,7 +119,7 @@ phaseLabel.Parent = topBar
 local roundLabel = Instance.new("TextLabel")
 roundLabel.Name = "Round"
 roundLabel.Size = UDim2.new(0, 80, 0, 12)
-roundLabel.Position = UDim2.new(0.5, -40, 0, 20)
+roundLabel.Position = UDim2.new(0.5, -40, 0, 18)
 roundLabel.BackgroundTransparency = 1
 roundLabel.FontFace = font
 roundLabel.TextSize = 11
@@ -133,7 +134,7 @@ roundLabel.Parent = topBar
 local timerLabel = Instance.new("TextLabel")
 timerLabel.Name = "Timer"
 timerLabel.Size = UDim2.new(0, 60, 0, 12)
-timerLabel.Position = UDim2.new(0.5, -30, 0, 32)
+timerLabel.Position = UDim2.new(0.5, 66, 0, 2)
 timerLabel.BackgroundTransparency = 1
 timerLabel.FontFace = font
 timerLabel.TextSize = 12
@@ -148,7 +149,7 @@ timerLabel.Parent = topBar
 local speedBuff = Instance.new("TextLabel")
 speedBuff.Name = "SpeedBuff"
 speedBuff.Size = UDim2.new(0, 30, 0, 10)
-speedBuff.Position = UDim2.new(1, -170, 0, 32)
+speedBuff.Position = UDim2.new(1, -170, 0, 18)
 speedBuff.BackgroundTransparency = 1
 speedBuff.FontFace = font
 speedBuff.TextSize = 9
@@ -163,7 +164,7 @@ speedBuff.Parent = topBar
 local immunityLabel = Instance.new("TextLabel")
 immunityLabel.Name = "Immunity"
 immunityLabel.Size = UDim2.new(0, 30, 0, 10)
-immunityLabel.Position = UDim2.new(1, -130, 0, 32)
+immunityLabel.Position = UDim2.new(1, -130, 0, 18)
 immunityLabel.BackgroundTransparency = 1
 immunityLabel.FontFace = font
 immunityLabel.TextSize = 9
@@ -172,10 +173,25 @@ immunityLabel.Text = "IMM"
 immunityLabel.TextStrokeTransparency = 1
 immunityLabel.TextXAlignment = Enum.TextXAlignment.Center
 immunityLabel.TextYAlignment = Enum.TextYAlignment.Center
-immunityLabel.Visible = false
-immunityLabel.Parent = topBar
+	immunityLabel.Visible = false
+	immunityLabel.Parent = topBar
 
-local bottomNotify = Instance.new("Frame")
+	-- Day/Night mode badge (top-right, above the status glyphs); text/color set by HUDController from EnvironmentSync
+	local modeLabel = Instance.new("TextLabel")
+	modeLabel.Name = "ModeLabel"
+	modeLabel.Size = UDim2.new(0, 120, 0, 16)
+	modeLabel.Position = UDim2.new(1, -140, 0, 2)
+	modeLabel.BackgroundTransparency = 1
+	modeLabel.FontFace = font
+	modeLabel.TextSize = 13
+	modeLabel.TextColor3 = lightText
+	modeLabel.Text = ""
+	modeLabel.Visible = false
+	modeLabel.TextXAlignment = Enum.TextXAlignment.Right
+	modeLabel.TextYAlignment = Enum.TextYAlignment.Center
+	modeLabel.Parent = topBar
+
+	local bottomNotify = Instance.new("Frame")
 bottomNotify.Name = "BottomNotify"
 bottomNotify.Size = UDim2.new(0.5, 0, 0, 44)
 bottomNotify.AnchorPoint = Vector2.new(0.5, 0)
@@ -287,29 +303,21 @@ healthNumber.Parent = hud
 
 local TweenService = game:GetService("TweenService")
 
-local topBarCorner = Instance.new("UICorner")
-topBarCorner.CornerRadius = UDim.new(0, 6)
-topBarCorner.Parent = topBar
+-- (TopBar has no rounded corners: a full-bleed bar with UICorner reads as a floating slab)
 
 -- Top bar slide-down + fade-in
-topBar.BackgroundTransparency = 0.25
-local topBarFade = TweenService:Create(topBar, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 0.25})
+topBar.BackgroundTransparency = 0.4
+local topBarFade = TweenService:Create(topBar, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 0.4})
 topBarFade:Play()
 
-	for _, child in ipairs({teamBadge, scoreLabel, phaseLabel, roundLabel, timerLabel, speedBuff, immunityLabel}) do
+	for _, child in ipairs({teamBadge, scoreLabel, phaseLabel, roundLabel, timerLabel, speedBuff, immunityLabel, modeLabel}) do
 	child.BackgroundTransparency = 1
 	child.TextTransparency = 1
-	local fade = TweenService:Create(child, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0.1, true), {TextTransparency = 0})
+	local fade = TweenService:Create(child, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0})
 	fade:Play()
 end
 
--- Side panels slide-in
-leftSide.Position = UDim2.new(-0.2, 8, 0.5, -35)
-rightSide.Position = UDim2.new(1.2, -168, 0.5, -25)
-local slideLeft = TweenService:Create(leftSide, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0, 8, 0.5, -35)})
-slideLeft:Play()
-local slideRight = TweenService:Create(rightSide, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(1, -168, 0.5, -25)})
-slideRight:Play()
+-- (Side status panels removed — replaced by Minimap markers, owner-directed)
 
 -- BottomNotify fade-in
 bottomNotify.BackgroundTransparency = 1
@@ -357,14 +365,41 @@ for i = 1, 12 do
 	pip.Parent = staminaPips
 end
 
+-- Flashlight battery pips (night matches only; lit count mirrors LocalPlayer "Battery" attribute)
+local batteryPips = Instance.new("Frame")
+batteryPips.Name = "BatteryPips"
+batteryPips.AnchorPoint = Vector2.new(0.5, 1)
+batteryPips.Position = UDim2.new(0.5, 0, 1, -44)
+batteryPips.Size = UDim2.new(0, 180, 0, 5)
+batteryPips.BackgroundTransparency = 1
+batteryPips.Visible = false
+batteryPips.Parent = hud
+
+local batteryLayout = Instance.new("UIListLayout")
+batteryLayout.FillDirection = Enum.FillDirection.Horizontal
+batteryLayout.Padding = UDim.new(0, 2)
+batteryLayout.SortOrder = Enum.SortOrder.LayoutOrder
+batteryLayout.Parent = batteryPips
+
+for i = 1, 10 do
+	local bpip = Instance.new("Frame")
+	bpip.Name = "BPip" .. i
+	bpip.LayoutOrder = i
+	bpip.Size = UDim2.new(0, 13, 0, 5)
+	bpip.BackgroundColor3 = Color3.fromRGB(255, 200, 80)
+	bpip.BackgroundTransparency = 0.85
+	bpip.BorderSizePixel = 0
+	bpip.Parent = batteryPips
+end
+
 -- Minimap: 2D projection (world X/Z -> map px), top-right; markers positioned/colored by HUDController
 local minimap = Instance.new("Frame")
 minimap.Name = "Minimap"
 minimap.AnchorPoint = Vector2.new(1, 0)
-minimap.Position = UDim2.new(1, -10, 0, 54)
-minimap.Size = UDim2.new(0, 150, 0, 150)
+minimap.Position = UDim2.new(1, -10, 0, 46)
+minimap.Size = UDim2.new(0, 112, 0, 112)
 minimap.BackgroundColor3 = Color3.fromRGB(10, 12, 16)
-minimap.BackgroundTransparency = 0.3
+minimap.BackgroundTransparency = 0.5
 minimap.BorderSizePixel = 0
 minimap.ClipsDescendants = true
 minimap.Parent = hud
@@ -441,6 +476,70 @@ playerNose.BackgroundColor3 = Color3.new(1, 1, 1)
 playerNose.BorderSizePixel = 0
 playerNose.ZIndex = 3
 playerNose.Parent = playerMarker
+
+-- Crosshair: center dot + state ring + contextual hint (the controller drives
+-- color/size/text from proximity; the existing menu-hide logic picks this up).
+local crosshair = Instance.new("Frame")
+crosshair.Name = "Crosshair"
+crosshair.AnchorPoint = Vector2.new(0.5, 0.5)
+crosshair.Position = UDim2.new(0.5, 0, 0.5, 0)
+crosshair.Size = UDim2.new(0, 28, 0, 28)
+crosshair.BackgroundTransparency = 1
+crosshair.ZIndex = 5
+crosshair.Parent = hud
+
+local chDot = Instance.new("Frame")
+chDot.Name = "Dot"
+chDot.AnchorPoint = Vector2.new(0.5, 0.5)
+chDot.Position = UDim2.new(0.5, 0, 0.5, 0)
+chDot.Size = UDim2.new(0, 6, 0, 6)
+chDot.BackgroundColor3 = Color3.new(1, 1, 1)
+chDot.BorderSizePixel = 0
+chDot.ZIndex = 6
+chDot.Parent = crosshair
+local chDotCorner = Instance.new("UICorner")
+chDotCorner.CornerRadius = UDim.new(1, 0)
+chDotCorner.Parent = chDot
+local chDotOutline = Instance.new("UIStroke")
+chDotOutline.Thickness = 2
+chDotOutline.Color = Color3.new(0, 0, 0)
+chDotOutline.Transparency = 0.25
+chDotOutline.Parent = chDot
+
+local chRing = Instance.new("Frame")
+chRing.Name = "Ring"
+chRing.AnchorPoint = Vector2.new(0.5, 0.5)
+chRing.Position = UDim2.new(0.5, 0, 0.5, 0)
+chRing.Size = UDim2.new(0, 24, 0, 24)
+chRing.BackgroundTransparency = 1
+chRing.ZIndex = 5
+chRing.Parent = crosshair
+local chRingCorner = Instance.new("UICorner")
+chRingCorner.CornerRadius = UDim.new(1, 0)
+chRingCorner.Parent = chRing
+local chStroke = Instance.new("UIStroke")
+chStroke.Name = "Stroke"
+chStroke.Thickness = 3
+chStroke.Color = Color3.new(1, 1, 1)
+chStroke.Transparency = 0.35
+chStroke.Parent = chRing
+
+local hintLabel = Instance.new("TextLabel")
+hintLabel.Name = "HintLabel"
+hintLabel.AnchorPoint = Vector2.new(0.5, 0)
+hintLabel.Position = UDim2.new(0.5, 0, 0.5, 22)
+hintLabel.Size = UDim2.new(0, 260, 0, 16)
+hintLabel.BackgroundTransparency = 1
+hintLabel.FontFace = font
+hintLabel.TextSize = 13
+hintLabel.TextColor3 = lightText
+hintLabel.TextStrokeTransparency = 0.5
+hintLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+hintLabel.TextXAlignment = Enum.TextXAlignment.Center
+hintLabel.Text = ""
+hintLabel.Visible = false
+hintLabel.ZIndex = 6
+hintLabel.Parent = crosshair
 
 print("[BOPLUX_HUD] ScreenGui built with animations")
 

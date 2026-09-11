@@ -6,6 +6,7 @@ local stateBy = {}
 local staminaCapacity = 6
 local walkSpeed = 16
 local sprintSpeed = 25
+local crouchSpeed = 8
 local rescueBuffSpeed = 21
 local sprintRegenPerSecond = 1 / 3
 
@@ -14,6 +15,7 @@ function PlayerStateModule.register(player)
 		player = player,
 		stamina = staminaCapacity,
 		sprinting = false,
+		crouching = false,
 		jailed = false,
 		speedBuffUntil = 0,
 		speedBuffActive = false,
@@ -46,8 +48,10 @@ local function applySpeed(player, state)
 	end
 	if state.jailed then
 		humanoid.WalkSpeed = 0
-	elseif state.sprinting then
+	elseif state.sprinting and not state.crouching then
 		humanoid.WalkSpeed = sprintSpeed
+	elseif state.crouching then
+		humanoid.WalkSpeed = crouchSpeed
 	elseif state.speedBuffActive then
 		humanoid.WalkSpeed = rescueBuffSpeed
 	else
@@ -88,7 +92,7 @@ function PlayerStateModule.requestSprint(player, wanted)
 	if not state then
 		return false
 	end
-	if wanted and (state.jailed or state.stamina <= 0) then
+	if wanted and (state.jailed or state.crouching or state.stamina <= 0) then
 		return false
 	end
 	if state.sprinting ~= wanted then
@@ -96,6 +100,34 @@ function PlayerStateModule.requestSprint(player, wanted)
 		applySpeed(player, state)
 	end
 	return true
+end
+
+-- GDD §3.2: crouch available at all times. Hold-to-crouch: slower walk,
+-- suppresses sprint while held, cleared on jail + round reset.
+function PlayerStateModule.requestCrouch(player, wanted)
+	local state = stateBy[player]
+	if not state then
+		return false
+	end
+	if wanted and state.jailed then
+		return false
+	end
+	if state.crouching ~= wanted then
+		state.crouching = wanted
+		if wanted then
+			state.sprinting = false
+		end
+		applySpeed(player, state)
+	end
+	return true
+end
+
+function PlayerStateModule.isCrouching(player)
+	local state = stateBy[player]
+	if not state then
+		return false
+	end
+	return state.crouching
 end
 
 function PlayerStateModule.setJailed(player, jailed)
@@ -106,6 +138,7 @@ function PlayerStateModule.setJailed(player, jailed)
 	state.jailed = jailed
 	if jailed then
 		state.sprinting = false
+		state.crouching = false
 	end
 	applySpeed(player, state)
 	local humanoid = humanoidFor(player)
@@ -173,6 +206,7 @@ function PlayerStateModule.resetPlayerRound(player)
 		return false
 	end
 	state.sprinting = false
+	state.crouching = false
 	state.jailed = false
 	state.stamina = staminaCapacity
 	state.speedBuffUntil = 0

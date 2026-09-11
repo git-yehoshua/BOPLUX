@@ -375,3 +375,100 @@ ot roundTimerSuperseded.
 - Fresh Play session on Courtyard_v002. Real-route battery: debug-jail -> breakout channel start + move-cancel (1.6m shift kills channel, matches v001 behavior); camping ring wiring re-verified (0.5 -> on 2.5px, clear -> off); walk-path waypoints through the new mid gates clear (spawn->lane->gate->site approach unobstructed); real-route plant on Site A from the new approach position -> planted, det counting; sabotage range-negative re-fired (inconclusive read this session - round flipped mid-check - but gate code unchanged and yesterday's negative+positive both passed); Defender-half debug-plant + real RequestDefuseHold -> defuse completed within its 7s window and ended the final round (MatchEnd->new-match r1 within ~10s; control: non-defuse paths take 36s+). 
 - Judgment call recorded: r5/r6 defuse verification relied on timing inference (MatchEnd timing) rather than direct channel sighting because round flips kept landing inside the 7s window - acceptable given identical route passed with full sampler evidence yesterday (27 sightings, 0.08->2.98).
 - No defects found on v002. Session stopped clean. Docs current from last night; no further updates needed.
+
+## 2026-09-09 — Asset library pipeline (Phases A+B) + dressed map Courtyard_v003 (Phase C)
+
+- Phase A: calibration — 1 Kenney unit = 1 stud at default import; ×7.14 = real-world (door 7.14 studs). Scripted import pipeline proven (relay ? HttpService ? OBJ parse ? EditableMesh ? CreateMeshPartAsync); owner's ASCII-FBX import errors root-caused.
+- Phase B: `ServerStorage.AssetLibrary` — 204 models built (RetroUrban 111 / FurnitureKit 55 / Clutter 26 / Lighting 12) at ×7.14; exact GLB palette (190 parts) + 22 uploaded retro-urban atlas textures (245 parts). Builder: `ServerStorage.AssetLibraryBuilder` (repo mirror synced).
+- Phase C: `MapDresser` (repo `ServerScriptService/MapRuntime/MapDresser.luau`) — 214 props, all CanCollide=false, strict rotational pairs; `MapBuilder` bumped to Courtyard_v003 and wired to dress on build. Live verification: contract registration, symmetry audit 0 mismatches, real-route plant ? detonation ? Attacker win (score 2-1), halftime swap. Template persisted in Edit mode post-session.
+- Owner actions pending: Ctrl+S; visual review of ScreenCapture_MapV003_Overview / _SiteA / ScreenCapture_LibraryReview_1.
+- Durability risk tracked in REC-0015 (scripted meshes unverified across save/reload; fallback routes documented).
+- Changelog 0.1.18; project-truth map line updated to v003-active; source note `BOPLUX_3D_library_build_provenance.md` added with atlas asset IDs.
+
+## 2026-09-09 - Map dressing pivot fix ("assets isn''t rendering on the map")
+
+- **Status**: Fixed and live-verified; owner Ctrl+S + visual review pending.
+- **Files**: `ServerScriptService/MapRuntime/MapDresser.luau` (place() bottom-aligns via GetBoundingBox; header pivot note corrected), `ServerStorage/AssetLibraryBuilder.luau` (header pivot-reality note). Local edits auto-propagated to the Studio datamodel (file sync confirmed working).
+- **Root cause**: library models carry bbox-CENTER pivots (CreateMeshPartAsync centers mesh on Part Position), not the bottom-center the dresser assumed; every ground prop sank half its height (walls fully buried).
+- **Verification evidence**: Edit rebuild of Courtyard_v003 (214 props; wall bottom 0.000/top 7.140, stacked box 3.020, grass 0.030); Play session ActiveMap 214 models, wall bottom 0.000, console clean, round reached Live, before/after screenshots show full-height dressing.
+- **Retrospective**: numeric size audits are winding/offset-blind — always pair geometry changes with a bbox-bottom/earth-level numeric check (cheap) plus a screenshot read; pivot conventions must be asserted in code (bbox align), not trusted from comments.
+- **Carryovers**: REC-0016 (wall atlas checkerboard texture verification); standing owner Ctrl+S; 2-player pass REC-0004/0005.
+- Changelog 0.1.20.
+
+## 2026-09-09 - Facade visibility pass ("still like that" + FIX everything)
+
+- **Status**: Implemented and live-verified; owner Ctrl+S + visual review pending.
+- **Files**: `ServerScriptService/MapRuntime/MapDresser.luau` (perimeter: full-length k=0..15, 3-high rows, window band via ru_wall-a-window). 214 -> 346 props.
+- **Forensics**: owner Asset Manager images = 20 Kenney atlas textures (zero meshes/models uploaded anywhere); thumbnail pixel-decode proved uploads byte-correct; live-Client GetAssetFetchStatus Success for wall_lines/concrete/planks (textures load — pale look is kit palette at x7.14, not missing content); wall-a.obj groups partition faces (no z-fight); UVs one tile per face (sane). PreloadAsync is an invalid load probe in bridged sessions (fails even engine assets) — use GetAssetFetchStatus.
+- **Tooling trap**: stale require served old dresser on Edit rebuild (214); busted with REC-0003/0014 name-swap (MapDresser_OLD/MapBuilder_OLD created, fresh instances built 346, OLDs destroyed).
+- **Verification evidence**: Edit audit (346 models, 32 window-band, pivots 3.6/10.7/17.9, north row x 0..107.1); live Play ActiveMap 346, facade bottoms exactly 0.00/7.14/14.28, console clean, round Live. Screenshots ScreenCapture_4/5.
+- **Retrospective**: keep — byte-level asset forensics before assuming missing content; GetAssetFetchStatus over PreloadAsync. Add — vision-independent appearance checks remain weak; owner screenshot loop is the only ground truth for look. Gaps: art direction still pale (REC-0017 Proposed).
+- **Carryovers**: owner Ctrl+S + review facade screenshots; REC-0017 art-direction candidate; 2-player pass REC-0004/0005.
+- Changelog 0.1.21; project-truth map line updated to 346; REC-0016 Done.
+
+## 2026-09-10 " + char(0x2014) + @" Fresh-place rebuild (BOPLUX.rbxl) + Tulay_v001 + EnvironmentSystem (Day/Night + flashlight)
+
+- **Status**: Implemented and verified live; awaiting owner Ctrl+S. Task mode: mixed (rebuild + new feature) â€” AI-agent delivery.
+- **Rebuild** (owner retired the old template.rbxl as suspected-corrupt): new place C:\Users\Admin\Documents\BOPLUX\BOPLUX.rbxl populated 100% from repo via local HTTP relay (serve.js:8788 + manifest of 45 scripts -> HttpService:GetAsync -> Source), byte-verified 45/45 identical. Baseplate/SpawnLocation/template Atmosphere stripped; TextChatService input-bar + bubble disabled (ChatWindowEnabled property absent on this Studio build; CoreGuiToggles covers Chat). Feasibility evidence: all remotes runtime-created, HUD built in code, audio = rbxasset engine sounds.
+- **Latent repo bugs caught by the rebuild (REC-0003 class, both fixed + re-synced via relay)**: (1) MatchManager created MatchStateSync into a throwaway local (never assigned) -> nil FireClient in any from-scratch place; (2) HUDSetup still carried the dead leftSide/rightSide slide-in block from the pre-minimap era -> script died at line 321, dropping StaminaPips/BatteryPips/Minimap.
+- **Tulay_v001** (fresh map, NOT derived from Courtyard): canal-city, east-west wadeable canal (4 studs, Glass water), 3 bridges (mid + gate-tower plaza, 2 ring), bank parapets with landing gaps, colonnade site compounds, approach screens, yard cover. Contract anchors unchanged; symmetry audit 0 mismatches (106 paired + 3 pivot, 2 intentional warm/cool tint pairs). Template persisted in ServerStorage.Maps (9 children). MatchManager spawn comment updated.
+- **EnvironmentSystem** (new, owner-dictated): EnvironmentConfig + pure EnvironmentState + RunEnvironmentSystem (server). Day/Night rolled once per match start (PreRound r1, 50/50); Lighting snapshots (night: ClockTime 0, Brightness 1, Ambient/OutdoorAmbient cold, FogEnd 480, Exposure 0.05); night-only site beacons (Neon + PointLight) + jail Interior lamps (restored on day). Flashlight: RequestFlashline remote, L key (PlayerInputs), server-granted head SpotLight (range 60, 35deg, shadows, warm white) visible to all clients; battery 100, drain 2/s, regen 5/s, empty latch re-enables at 15, reset on respawn + PreRound; EnvironmentSync dedup'd snapshots -> client mirrors MatchMode/FlashlightOn/Battery attributes; HUD ModeLabel (TopBar right) + BatteryPips (10 amber, night-only). Day mode denies flashlight.
+- **Tests**: EnvironmentStateTests (10 cases) registered in RunTests -> suite now 75/75 green in the rebuilt place.
+- **Live verification (2 sessions)**: Day session â€” flashlight denied (no SpotLight, attr false); real-route plant Site A ("A" arg) 5s channel -> planted -> detonation 45->0 -> Attacker win (HUD score 1-0, round 2 Live). Night session â€” ClockTime 0/fog 480, 4 night lights, beacon Neon + jail lamps confirmed; flashlight ON (SpotLight on Head, shadows) -> drain 99.2->91.2 over 4s (2/s exact) -> OFF (light destroyed) -> regen 39.3->49.3 over 2s (5/s exact); toggle round-trip clean. Console clean after the 2 fixes. Screenshots: ScreenCapture_Tulay_Day_Overview, ScreenCapture_Tulay_Night_Flashlight (owner eyes; agent has no image input).
+- **Docs**: project-truth.md (topology line + systems line), project-truth-summary.md (architecture + current state), CHANGELOG 0.1.22, REC-0003 -> Done (resolved by rebuild), REC-0017 (Tulay dressing, Proposed), REC-0018 (root temp-file hygiene, Proposed), current-task.md updated.
+- **Owner action**: Ctrl+S in Studio to persist the rebuilt place (cannot be scripted from this context). Natural next prompt: review the two screenshots + walk Tulay in person, then "Run the 2-player verification pass".
+
+## 2026-09-10 " + char(0x2014) + @" Tulay_v002 Estero canal-town art pass (procedural)
+
+- **Status**: Implemented and verified live; awaiting owner Ctrl+S + visual review. Task mode: meaningful feature (visual) â€” AI-agent delivery.
+- **Owner decisions**: art direction = Estero canal-town (Filipino identity); scope = code-only art pass first (AssetLibrary dressing deferred, REC-0017).
+- **Files**: ServerScriptService/MapRuntime/MapBuilder.luau (v002: jail art + estero dressing + facade builder + fiesta/dock/lamp/stall/banca helpers, MAP_NAME Tulay_v002), ServerScriptService/EnvironmentSystem/RunEnvironmentSystem.server.lua (night pass scans *NightLamp* parts -> PointLight). Both synced via relay; MapBuilder needed clone-swap twice (cached require).
+- **Verification**: template 601 parts; strict 180-degree symmetry audit 0 mismatches (596 paired + 18 intentional tint pairs + 5 pivot pieces); contract markers/attributes intact (jails/sites hoisted correctly); 75/75 unit tests; live night session: 26 map-driven lights, Cell_A bars/sign/lamp/bunk confirmed in Workspace.Jails, beacon Neon, plant channel real-route. Screenshots ScreenCapture_TulayV2_Jail_Night + ScreenCapture_TulayV2_Canal_Night (owner eyes).
+- **Symmetry engineering notes**: per-cell furniture uses axis-signed offsets (sideSign) so cells mirror; per-site decor sets must be point-symmetric (bollards x4, sandbag pairs); fiesta strings use palindrome (pivot) / reversed color order (pairs); docks/stalls/lamps built as mirrored model pairs. Pre-audit review caught 5 point-symmetry bugs before the audit run.
+- **Docs**: CHANGELOG 0.1.23, project-truth-summary map line -> Tulay_v002 active, current-task #2 section. REC-0017 remains open for the optional AssetLibrary dressing layer.
+- **Owner action**: Ctrl+S. Natural next prompt: review screenshots + walk the map, then the 2-player verification pass.
+
+## 2026-09-10 " + char(0x2014) + @" Tulay_v003 real-props pass + flashlight/banderita fixes
+
+- **Status**: Implemented and verified live; awaiting owner Ctrl+S + visual review. Owner verdict on v002: procedural stand-ins read as nonsense up close (dock bollards, well mushroom, dark spawn rooms); requested real assets + flashlight close-range fix + higher banderitas.
+- **Assets**: all kit OBJs survived on disk (temp relay dir) + BOPLUX_assets.tar.gz in wiki. AssetLibrary rebuilt in-place: 264/264 models (140 FK + 124 RU), 0 errors, all dresser-critical names present. Flat-pass dressing per the proven UV-corruption finding (textures stripped, exact Kenney palette).
+- **TulayDresser** (MapDresser.luau rewrite): 84 props â€” site dumpster/crates/plants/tree, window-module screen cladding, yard pallets/boxes/trashcan/tree/shrub/bench, dock pallet cargo, ring dumpster/pallets/wall-lows/trees/bricks, cell trashcan + wall lamp, furnished spawn rooms + awnings. MAP_NAME Tulay_v003.
+- **Audit-found mirror fix**: P() partner yaw must be yaw+180 for off-center parts (was same-yaw): 8 mismatches (cladding windows facing into walls, dumpster lid offsets) -> 0 after fix. Final: 731 parts, 726 paired + 16 tint pairs + 5 pivot, 0 mismatches, contract intact, 75/75 tests.
+- **Procedural cleanups**: wells, stalls, algae, drains, spawn posters removed; dock bollards -> small iron cylinders; spawn NightLamp bulbs added (dark-room complaint).
+- **Flashlight**: emission moved to FlashlightMount Attachment (0, 0.3, -1.5) on Head; verified mount + clean toggle; close-range wall illumination confirmed in screenshot.
+- **Banderitas**: rope y 6.2-6.5 -> 8.0-8.2 (numeric verify 8.0-8.1).
+- **Live (night)**: v003 active + dressed, 28 lights, plant channel real-route (detonation win, score 1-0). Screenshots: ScreenCapture_TulayV3_ScreenCladding, _Cladding_Lit, _Bridge_Fiesta (owner eyes).
+- **Docs**: CHANGELOG 0.1.24, project-truth-summary -> Tulay_v003 active, REC-0017 -> Done, current-task #3.
+- **Owner action**: Ctrl+S. Open items unchanged: 2-player pass (REC-0004/0005), audio upload (REC-0006), root temp-file hygiene (REC-0018).
+
+## 2026-09-10 " + char(0x2014) + @" Checkered-box root cause: inside-out library (winding rebake)
+
+- **Status**: Fixed and verified live; awaiting owner Ctrl+S + eyes verify in DAY. Owner screenshots: green checkered cube (plant material), flat spawn props.
+- **Forensics**: (1) Studio probe of the live plant instance: geometry present + correct (pot/soil/leaves, DS=true on leaves) -> shading fault, not missing geometry. (2) Signed-volume test on closed solids: bookcase +0.0417 raw -> -0.0417 with builder Z-negation; dumpster +0.2209 -> -0.2209. PROVEN: Z-negation mirrors winding inside-out. Both DoubleSided settings glitch (false=interiors, true=alternating checker) -> every historical symptom explained; Fix #3/#7/#9 verdicts partially misattributed (agent had no vision).
+- **Fix**: builder Y-rotation (negate X+Z, order unchanged) + corrected header/v3 comments; dresser foliage-aware DoubleSided ({leaf,leaves,plant,treeA,treeB,grass}=true, else false) + corrected Fix #9 note. Library rebaked 264/264, 0 errors. Template v003 rebuilt in place (731 parts, 84 props), audit 0 mismatches, 75/75 tests.
+- **Texture verdict**: UV-range audit (all 264 OBJs): kit UVs are integer TILING coords (wall-a spans (2,1)-(3,2)) â€” valid authoring, not corruption. Live experiment (unmodified textured ru_wall-a-window): renders flat gray -> engine smears out-of-range UVs (clamp-like), no tiling. Flat-pass stays; UV-island normalization rebake recorded as future work only.
+- **Live (night)**: no checker anywhere, boxes read 3D, beacon glows, foliage solid green. Screenshots: ScreenCapture_Rebake_Plant_Closeup/Day (framing miss, crates read 3D), ScreenCapture_Texture_Test(_Lit) (test wall experiment), ScreenCapture_Foliage_Fixed.
+- **Docs**: CHANGELOG 0.1.25, current-task #4. Truth summary v003 line stands (map unchanged in name; library rebaked underneath).
+- **Owner action**: Ctrl+S, verify props in DAY.
+
+## 2026-09-10 " + char(0x2014) + @" Asset removal + crosshair/HUD pass (Tulay_v004)
+
+- **Status**: Implemented and verified live; awaiting owner Ctrl+S. Owner verdict: assets still checkered/glitchy on their screen -> remove all integrated assets; improve crosshair + HUD instead.
+- **Removal**: MapBuilder/MapDresser unwired (file kept as history); ServerStorage.AssetLibrary (264 models) + Tulay_v003 template deleted from the place; Tulay_v004 rebuilt (567 parts, structural + procedural art only), symmetry audit 0 mismatches, 75/75 tests. Kit OBJs + wiki tarball archived for future retry. REC-0017 reopens (props need vision-verified pass).
+- **Crosshair was entirely missing** (setup never created it; controller block dead). Built: dot + UIStroke ring + HintLabel in HUDSetup; controller state machine (default/target-red-expand/jail-amber/site-blue) + hint priority (breakout > defuse/plant > rescue > capture, team-gated, sabotage unhinted). Ranges mirror server validation exactly (fixed 3D-vs-XZ mismatch vs RunObjectiveSystem line 142 during verification).
+- **Detonation HUD**: team-specific plant warning once per plant; timer switches to red detonation countdown with <10s blink; restored after.
+- **Live verification**: element presence, plant hint (blue), jail hint (amber), plant -> warning + red timer + hint switch, full plant->detonation->win (score advanced). Screenshot ScreenCapture_HUD_Crosshair_Hint. Target state 2-player-gated.
+- **Docs**: CHANGELOG 0.1.26, project-truth-summary -> v004 + HUD, current-task #5.
+- **Owner action**: Ctrl+S + play.
+
+## 2026-09-11 " + char(0x2014) + @" Requirements gaps: crouch + crosshair visibility + hands attempt (parked) + map cleanup
+
+- **Status**: Implemented and verified live except hands (parked honestly); awaiting owner Ctrl+S. Owner prompts: HUD seemingly unchanged, map slop, run/jump-only actions, no visible arms/hands/weapon; ordered requirements re-read for gaps.
+- **Context discovery**: GDD v1.1 read cover-to-cover + full-text search of brief, Game Concept doc, truth, tasks, repo for weapon/gun/melee/arms terms -> NO weapon requirement exists anywhere; capture is touch/tag by locked design (GDD 4.1/5.2). No weapons added (would overturn locked truth). Real GDD gap found: CROUCH (3.2, available at all times) was entirely missing.
+- **Crouch**: PlayerStateModule.crouching + crouchSpeed 8 (suppresses sprint/buff, cleared on jail/reset) + RequestCrouch remote + PlayerInputs C hold + CameraOffset dip + CharacterAdded reset + PlayerStateTests (7 cases). Live: 16->8->denied->16.
+- **Crosshair visibility**: was live but a 4px speck (explains 'HUD didn't change') -> 6px dot + black outline + 3px ring (screenshot-verified prominent) + hit-flash (jail occupant++ red, plant-channel blue).
+- **Hands PARKED**: Tool holder (blocked view; shrunk; then floated disconnected with no arm in frame) + box viewmodel (read as slop, removed file+instance) + probe (arm below frame; own fade hid it). Blind composition unbounded -> removed all attempts, beam-only flashlight stands. Needs live-eyes session.
+- **Map slop**: numeric audit (78 floaters/34 escapees, near-all by-design: embedded bands, hanging flags, exterior facades, markers); 2 real fixes (awning struts grounded, spawn lamp attached) verified post-rebuild. Workspace clean.
+- **Verified live**: crouch, hints/colors, plant->warning+red timer, full plant->win. Tests 82/82. Screenshots: Viewmodel hands (slop, reverted), RealArm_Tool (floating, reverted), final crosshair/HUD.
+- **Docs**: CHANGELOG 0.1.27, current-task #6. Truth: crouch fills GDD 3.2 (scope now complete on movement).
+- **Owner action**: Ctrl+S. Open: hands (eyes session), weapons only via explicit GDD override, 2-player pass, audio upload.

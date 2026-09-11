@@ -10,6 +10,7 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local matchSystems = ReplicatedStorage:WaitForChild("MatchSystems")
 local matchStateSync = matchSystems:WaitForChild("MatchStateSync")
 local playerStateSync = matchSystems:WaitForChild("PlayerStateSync")
+local environmentSync = matchSystems:WaitForChild("EnvironmentSync", 10)
 local StaminaConstants = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("StaminaConstants"))
 
 local function waitForChild(parent, name, timeout)
@@ -46,11 +47,13 @@ local roundLabel = waitForChild(topBar, "Round")
 local timerLabel = waitForChild(topBar, "Timer")
 local speedBuff = waitForChild(topBar, "SpeedBuff")
 local immunityLabel = waitForChild(topBar, "Immunity")
+local modeLabel = waitForChild(topBar, "ModeLabel", 5)
 local warningBanner = bottomNotify and waitForChild(bottomNotify, "WarningBanner")
 local warningText = warningBanner and waitForChild(warningBanner, "Text")
 local revealBanner = bottomNotify and waitForChild(bottomNotify, "RevealBanner")
 local revealText = revealBanner and waitForChild(revealBanner, "Text")
 local staminaPipsRow = waitForChild(hud, "StaminaPips", 8)
+local batteryPipsRow = waitForChild(hud, "BatteryPips", 8)
 local healthBar = waitForChild(hud, "HealthBar", 8)
 local healthFill = healthBar and waitForChild(healthBar, "Fill")
 local healthNumber = waitForChild(hud, "HealthNumber", 8)
@@ -60,6 +63,25 @@ local markerJailB = minimap and waitForChild(minimap, "MarkerJailB", 5)
 local markerSiteA = minimap and waitForChild(minimap, "MarkerSiteA", 5)
 local markerSiteB = minimap and waitForChild(minimap, "MarkerSiteB", 5)
 local playerMarker = minimap and waitForChild(minimap, "PlayerMarker", 5)
+
+-- Crosshair state + hint (driven per-tick from proximity; colors follow the
+-- project status semantics: red = target, amber = jail, blue = site).
+local crosshairRing = crosshair and waitForChild(crosshair, "Ring", 5)
+local crosshairStroke = crosshairRing and waitForChild(crosshairRing, "Stroke", 5)
+local crosshairDot = crosshair and waitForChild(crosshair, "Dot", 5)
+local hintLabel = crosshair and waitForChild(crosshair, "HintLabel", 5)
+local localPlayerTeam = nil
+local localIsJailed = false
+local detonationActive = false
+local detonationRemaining = 0
+local lastCrossState = nil
+local lastHint = nil
+local plantWarned = {}
+local flashUntil = 0
+local flashState = nil
+local flashCrosshair -- forward: defined with setCrosshair below, called by the status updaters above
+local prevOcc = { A = 0, B = 0 }
+local prevPlantChannel = { A = false, B = false }
 
 local function formatTime(seconds)
 	local s = math.ceil(math.max(0, seconds))
@@ -85,9 +107,9 @@ local function setKind(frame, kind)
 	if frame then frame.BackgroundColor3 = statusColor(kind) end
 end
 
--- Minimap: 2D projection of the 224x224 courtyard (world X/Z -> 150px map)
+-- Minimap: 2D projection of the 224x224 courtyard (world X/Z -> 112px map)
 local MAP_HALF = 112
-local MAP_PX = 150
+local MAP_PX = 112
 local function worldToMap(x, z)
 	return UDim2.fromOffset(MAP_PX / 2 + (x / MAP_HALF) * (MAP_PX / 2), MAP_PX / 2 + (z / MAP_HALF) * (MAP_PX / 2))
 end
@@ -122,9 +144,11 @@ local function phaseDisplayName(phase)
 end
 
 local function updateMatchHUD(data)
+	localPlayerTeam = data.playerTeam
 	if phaseLabel then phaseLabel.Text = phaseDisplayName(data.phase) end
 	if roundLabel then roundLabel.Text = data.round and ("Round " .. data.round) or "" end
-	if timerLabel then timerLabel.Text = data.timeRemaining and formatTime(data.timeRemaining) or "" end
+	-- While a spike is planted the detonation countdown owns the timer label.
+	if timerLabel and data.timeRemaining and not detonationActive then timerLabel.Text = formatTime(data.timeRemaining) end
 	if scoreLabel and data.score then
 		scoreLabel.Text = (data.score.Attackers or 0) .. " - " .. (data.score.Defenders or 0)
 	end
@@ -144,6 +168,7 @@ local function updatePlayerHUD(data)
 	-- Mirror server stamina (pushed on change by RunPlayerState.firePlayerSync) onto a client attribute;
 	-- UI binds via GetAttributeChangedSignal("Stamina") — event-driven, no polling.
 	LocalPlayer:SetAttribute("Stamina", data.stamina or 0)
+	localIsJailed = data.isJailed == true
 	if speedBuff then speedBuff.Visible = data.hasSpeedBuff end
 	if immunityLabel then immunityLabel.Visible = data.hasCaptureImmunity end
 end
@@ -268,6 +293,10 @@ local function updateJailStatus()
 		local intA = cellA:FindFirstChild("Interior")
 		if intA then
 			local countA = intA:GetAttribute("JailOccupantCount") or 0
+			if countA > (prevOcc.A or 0) then
+				flashCrosshair("target")
+			end
+			prevOcc.A = countA
 			placeMarker(markerJailA, intA.Position)
 			setKind(markerJailA, countA > 0 and "active" or "clear")
 			updateCampingRing(markerJailA, intA)
@@ -277,6 +306,10 @@ local function updateJailStatus()
 		local intB = cellB:FindFirstChild("Interior")
 		if intB then
 			local countB = intB:GetAttribute("JailOccupantCount") or 0
+			if countB > (prevOcc.B or 0) then
+				flashCrosshair("target")
+			end
+			prevOcc.B = countB
 			placeMarker(markerJailB, intB.Position)
 			setKind(markerJailB, countB > 0 and "active" or "clear")
 			updateCampingRing(markerJailB, intB)
@@ -289,26 +322,218 @@ local function updateObjectiveStatus()
 	if not sitesFolder then
 		if markerSiteA then markerSiteA.Visible = false end
 		if markerSiteB then markerSiteB.Visible = false end
+		detonationActive = false
 		return
 	end
-	local siteA = sitesFolder:FindFirstChild("Site_A")
-	local siteB = sitesFolder:FindFirstChild("Site_B")
-	if siteA then
-		local intA = siteA:FindFirstChild("Interior")
-		if intA then
-			local planted = intA:GetAttribute("Planted")
-			local channel = intA:GetAttribute("ChannelKind")
-			placeMarker(markerSiteA, intA.Position)
-			setKind(markerSiteA, planted and "active" or (channel and "channel" or "clear"))
+	local minDet = nil
+	for _, siteId in ipairs({ "A", "B" }) do
+		local site = sitesFolder:FindFirstChild("Site_" .. siteId)
+		local marker = siteId == "A" and markerSiteA or markerSiteB
+		if site then
+			local int = site:FindFirstChild("Interior")
+			if int then
+				local planted = int:GetAttribute("Planted")
+				local channel = int:GetAttribute("ChannelKind")
+				local plantRunning = channel == "plant"
+				if plantRunning and not prevPlantChannel[siteId] then
+					flashCrosshair("site")
+				end
+				prevPlantChannel[siteId] = plantRunning
+				placeMarker(marker, int.Position)
+				setKind(marker, planted and "active" or (channel and "channel" or "clear"))
+				if planted then
+					local det = int:GetAttribute("DetonationRemaining") or 0
+					if not minDet or det < minDet then minDet = det end
+					if not plantWarned[siteId] then
+						plantWarned[siteId] = true
+						if localPlayerTeam == "Defenders" then
+							showWarning("SPIKE PLANTED — defuse it (hold E)!", 6)
+						else
+							showWarning("SPIKE PLANTED — defend it!", 6)
+						end
+					end
+				else
+					plantWarned[siteId] = false
+				end
+			end
 		end
 	end
-	if siteB then
-		local intB = siteB:FindFirstChild("Interior")
-		if intB then
-			local planted = intB:GetAttribute("Planted")
-			local channel = intB:GetAttribute("ChannelKind")
-			placeMarker(markerSiteB, intB.Position)
-			setKind(markerSiteB, planted and "active" or (channel and "channel" or "clear"))
+	if minDet then
+		detonationActive = true
+		detonationRemaining = minDet
+	else
+		detonationActive = false
+	end
+end
+
+-- Proximity mirrors the server ranges (JailConfig / ObjectiveConfig) so the
+-- crosshair and hint reflect what the server will actually accept.
+local CAPTURE_RANGE = 1.5
+local JAIL_RANGE = 4.5
+local SITE_RANGE = 2.0
+
+local function myRootPart()
+	local character = LocalPlayer.Character
+	return character and character:FindFirstChild("HumanoidRootPart")
+end
+
+local function nearestPlayerDist(root)
+	local best = math.huge
+	for _, other in ipairs(Players:GetPlayers()) do
+		if other ~= LocalPlayer then
+			local otherRoot = other.Character and other.Character:FindFirstChild("HumanoidRootPart")
+			if otherRoot then
+				local d = (otherRoot.Position - root.Position).Magnitude
+				if d < best then best = d end
+			end
+		end
+	end
+	return best
+end
+
+local function nearestSite(root)
+	local sitesFolder = Workspace:FindFirstChild("Sites")
+	if not sitesFolder then return nil end
+	-- XZ-only distance, mirroring RunObjectiveSystem's channel validation.
+	local flatRoot = Vector3.new(root.Position.X, 0, root.Position.Z)
+	local best, bestDist, bestPlanted = nil, math.huge, false
+	for _, siteId in ipairs({ "A", "B" }) do
+		local site = sitesFolder:FindFirstChild("Site_" .. siteId)
+		local int = site and site:FindFirstChild("Interior")
+		if int then
+			local d = (Vector3.new(int.Position.X, 0, int.Position.Z) - flatRoot).Magnitude
+			if d < bestDist then
+				bestDist = d
+				best = siteId
+				bestPlanted = int:GetAttribute("Planted") == true
+			end
+		end
+	end
+	if best and bestDist <= SITE_RANGE then
+		return best, bestPlanted
+	end
+	return nil
+end
+
+local function nearestJail(root)
+	local jailsFolder = Workspace:FindFirstChild("Jails")
+	if not jailsFolder then return nil end
+	local best, bestDist = nil, math.huge
+	for _, cellId in ipairs({ "A", "B" }) do
+		local cell = jailsFolder:FindFirstChild("Cell_" .. cellId)
+		local int = cell and cell:FindFirstChild("Interior")
+		if int then
+			local d = (int.Position - root.Position).Magnitude
+			if d < bestDist then
+				bestDist = d
+				best = cellId
+			end
+		end
+	end
+	if best and bestDist <= JAIL_RANGE then
+		return best
+	end
+	return nil
+end
+
+local CROSS_COLORS = {
+	default = Color3.new(1, 1, 1),
+	target = Color3.fromRGB(235, 70, 70),
+	jail = Color3.fromRGB(255, 180, 60),
+	site = Color3.fromRGB(80, 160, 220),
+}
+
+local function setCrosshair(state, hint, hintColor)
+	-- Hit-flash overrides the proximity state briefly (capture landed red,
+	-- plant channel started blue).
+	local effective, effSize = state, ((state == "target") and 32 or 24)
+	if flashUntil and os.clock() < flashUntil then
+		effective = flashState or state
+		effSize = 32
+	end
+	if effective ~= lastCrossState then
+		lastCrossState = effective
+		if crosshairRing then
+			crosshairRing.Size = UDim2.new(0, effSize, 0, effSize)
+		end
+		if crosshairStroke then
+			crosshairStroke.Color = CROSS_COLORS[effective] or CROSS_COLORS.default
+		end
+		if crosshairDot then
+			crosshairDot.BackgroundColor3 = CROSS_COLORS[effective] or CROSS_COLORS.default
+		end
+	end
+	if hint ~= lastHint then
+		lastHint = hint
+		if hintLabel then
+			hintLabel.Text = hint or ""
+			hintLabel.Visible = hint ~= nil and hint ~= ""
+			if hintColor then hintLabel.TextColor3 = hintColor end
+		end
+	end
+end
+
+flashCrosshair = function(kind)
+	flashState = kind
+	flashUntil = os.clock() + 0.3
+	lastCrossState = nil
+end
+
+local function updateCrosshairState()
+	if not crosshair then return end
+	local root = myRootPart()
+	if not root then
+		setCrosshair("default", nil)
+		return
+	end
+	-- Priority: breakout (jailed) > defuse/plant (site) > rescue (jail) > capture (player).
+	if localIsJailed then
+		setCrosshair("jail", "HOLD F — Breakout", CROSS_COLORS.jail)
+		return
+	end
+	local siteId, planted = nearestSite(root)
+	if siteId then
+		if planted then
+			if localPlayerTeam == "Defenders" then
+				setCrosshair("site", "HOLD E — Defuse", CROSS_COLORS.site)
+			else
+				setCrosshair("site", "Defend the spike", CROSS_COLORS.site)
+			end
+		else
+			if localPlayerTeam == "Attackers" then
+				setCrosshair("site", "HOLD LMB — Plant", CROSS_COLORS.site)
+			elseif localPlayerTeam == nil then
+				setCrosshair("site", "LMB Plant · E Defuse", CROSS_COLORS.site)
+			else
+				setCrosshair("site", nil)
+			end
+		end
+		return
+	end
+	if nearestJail(root) then
+		setCrosshair("jail", "E Rescue · RMB Reset", CROSS_COLORS.jail)
+		return
+	end
+	if nearestPlayerDist(root) <= CAPTURE_RANGE then
+		setCrosshair("target", "LMB — Capture", CROSS_COLORS.target)
+		return
+	end
+	setCrosshair("default", nil)
+end
+
+local function updateDetonationTimer()
+	if not timerLabel then return end
+	if detonationActive then
+		timerLabel.Text = formatTime(detonationRemaining)
+		timerLabel.TextColor3 = Color3.fromRGB(235, 70, 70)
+		-- Urgency blink under 10 seconds.
+		timerLabel.Visible = detonationRemaining >= 10 or (os.clock() % 0.6) < 0.4
+	else
+		if timerLabel.TextColor3 ~= Color3.new(1, 1, 1) then
+			timerLabel.TextColor3 = Color3.new(1, 1, 1)
+		end
+		if not timerLabel.Visible then
+			timerLabel.Visible = true
 		end
 	end
 end
@@ -321,6 +546,43 @@ playerStateSync.OnClientEvent:Connect(function(data)
 	updatePlayerHUD(data)
 end)
 
+-- Day/Night + flashlight (EnvironmentSystem): mode badge in the TopBar, battery
+-- pips visible only at night. State also mirrors onto LocalPlayer attributes
+-- (MatchMode / FlashlightOn / Battery) for any future client consumer.
+local function updateBatteryPips(value)
+	if not batteryPipsRow then return end
+	local pct = math.clamp(value / 100, 0, 1)
+	local lit = math.floor(pct * 10 + 0.5)
+	for i = 1, 10 do
+		local pip = batteryPipsRow:FindFirstChild("BPip" .. i)
+		if pip then
+			pip.BackgroundTransparency = i <= lit and 0.1 or 0.85
+		end
+	end
+end
+
+if environmentSync then
+	environmentSync.OnClientEvent:Connect(function(data)
+		LocalPlayer:SetAttribute("MatchMode", data.mode)
+		LocalPlayer:SetAttribute("FlashlightOn", data.flashlightOn)
+		LocalPlayer:SetAttribute("Battery", data.battery or 0)
+		if modeLabel then
+			if data.mode == "Night" then
+				modeLabel.Text = "NIGHT"
+				modeLabel.TextColor3 = Color3.fromRGB(150, 170, 255)
+				modeLabel.Visible = true
+				if batteryPipsRow then batteryPipsRow.Visible = true end
+				updateBatteryPips(data.battery or 0)
+			elseif data.mode == "Day" then
+				modeLabel.Text = "DAY"
+				modeLabel.TextColor3 = Color3.fromRGB(220, 200, 120)
+				modeLabel.Visible = true
+				if batteryPipsRow then batteryPipsRow.Visible = false end
+			end
+		end
+	end)
+end
+
 task.defer(function()
 	updateJailStatus()
 	updateObjectiveStatus()
@@ -330,6 +592,8 @@ RunService.Heartbeat:Connect(function()
 	updateJailStatus()
 	updateObjectiveStatus()
 	updatePlayerMarker()
+	updateCrosshairState()
+	updateDetonationTimer()
 end)
 
 print("[BOPLUX_HUD] Client controller running")

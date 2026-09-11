@@ -12,11 +12,11 @@ if not matchSystems then
 	matchSystems.Parent = ReplicatedStorage
 end
 
-local matchStateSync = matchSystems:WaitForChild("MatchStateSync", 10)
+local matchStateSync = matchSystems:FindFirstChild("MatchStateSync")
 if not matchStateSync then
-	local remote = Instance.new("RemoteEvent")
-	remote.Name = "MatchStateSync"
-	remote.Parent = matchSystems
+	matchStateSync = Instance.new("RemoteEvent")
+	matchStateSync.Name = "MatchStateSync"
+	matchStateSync.Parent = matchSystems
 end
 
 local playerStateSync = matchSystems:FindFirstChild("PlayerStateSync")
@@ -30,7 +30,7 @@ local eventsFolder = Instance.new("Folder")
 eventsFolder.Name = "Events"
 eventsFolder.Parent = script
 
--- Team spawn rooms (Courtyard_v001 contract; MapRuntime.MapBuilder SPAWN_ROOMS).
+-- Team spawn rooms (map contract; MapRuntime.MapBuilder SPAWN_ROOMS).
 -- Server positions players by match role each pre-round — neutral SpawnLocations
 -- cannot do team assignment (multi-player pass finding #2).
 local SPAWN_POINTS = {

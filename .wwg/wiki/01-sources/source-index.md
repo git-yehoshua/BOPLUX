@@ -16,6 +16,7 @@ This file tracks user-provided raw sources and references for the project.
 | src_20260906_ai_asset_tools | markdown-doc | BOPLUX AI Asset Tools (reference-only) | wiki/01-sources/raw/uploads/docs/BOPLUX_AI_asset_tools.md | raw | wiki/01-sources/source-index.md | 2026-09-06 |
 | src_20260906_game_concept | markdown-doc | Game Concept — Hide, Chase, Rescue & Deceive (original concept doc) | wiki/01-sources/raw/uploads/docs/Game Concept - Hide, Chase, Rescue & Deceive.md | raw | wiki/01-sources/source-index.md | 2026-09-06 |
 | src_20260906_sungraphica_free_scifi_ui | asset-pack | SunGraphica "FREE Sci-Fi UI" kit (CC BY 4.0; HUD panels/icons; uploaded as rbxassetids) | wiki/01-sources/raw/uploads/kits/SunGraphica_FREE_Sci-Fi_UI.zip | raw | wiki/01-sources/raw/uploads/kits/SunGraphica_FREE_Sci-Fi_UI_source-note.md | 2026-09-06 |
+| src_20260909_boplux_licensed_3d_library | asset-pack | BOPLUX Licensed 3D Asset Library (937 files / 269 unique models; Kenney CC0 + Poly Haven CC0; FBX/OBJ/GLB/DAE/GLTF) | wiki/01-sources/raw/uploads/kits/BOPLUX_assets.tar.gz | raw | wiki/01-sources/raw/uploads/kits/BOPLUX_Licensed_3D_Asset_Library.md; wiki/01-sources/raw/uploads/kits/BOPLUX_3D_library_manifest.csv; wiki/01-sources/raw/uploads/kits/BOPLUX_3D_library_flagged_items.md | 2026-09-09 |
 <!-- WWG_GENERATED:SOURCE_INDEX:END -->
 
 ## Notes
@@ -27,4 +28,5 @@ This file tracks user-provided raw sources and references for the project.
 - `src_20260906_map_architecture_recommendation` was PROMOTED into `project-truth.md` → Architecture Truth on 2026-09-06 with the owner's explicit approval.
 - `src_20260906_design_brief` and `src_20260906_ai_asset_tools` are REFERENCE ONLY, not governing. The design brief contains a confirmed timing error (breakout/rescue 3s/10s is backwards; locked values 45s/3s) — a correction note is now embedded inline in both the intake copy and the owner's original.
 - `src_20260906_sungraphica_free_scifi_ui` is the HUD UI kit used for the JailPanel/ObjectivePanel tactical restyle (CC BY 4.0 — attribution "SunGraphica" required, see kit source note). License is external to the repo; the pack's CC BY 4.0 statement was recorded from the itch.io distribution page.
+- `src_20260909_boplux_licensed_3d_library` is the owner's CC0 3D mesh library for map dressing (932 Kenney files CC0 + 5 Poly Haven files CC0; no attribution required). The library doc, per-file manifest, and flagged-items note are stored alongside the archive. 264/269 unique models have Studio-importable FBX/OBJ; 5 Poly Haven models are GLTF-only and need conversion. Extracted working copy lives at `C:\Users\Admin\Downloads\BOPLUX_assets\`.
 - Related canonical pages: `project-truth.md`, `terminology.md`, `11-synthesis/open-questions.md`.
